@@ -1,0 +1,1222 @@
+body {
+    font-size: 1em;
+    font-weight: 200;
+    line-height: 1.428571429;
+    letter-spacing: .05em;
+}
+.row > .list {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 5px;
+    width: 100%;
+}
+.row-wrap > .list {
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+}
+/* Intro Slider */
+
+.welcome {
+    background: #fff;
+    position: relative;
+    z-index: 1;
+    height: 100%;
+}
+.slider {
+    height: 100%;
+}
+.slider-slide {
+    /padding-top: 45px;
+    color: #000;
+    text-align: center;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: 300;
+}
+#logo {
+    margin: 30px 0px;
+}
+#list {
+    width: 170px;
+    margin: 30px auto;
+    font-size: 20px;
+}
+#list ol {
+    margin-top: 30px;
+}
+#list ol li {
+    text-align: left;
+    list-style: decimal;
+    margin: 10px 0px;
+}
+/* Swipe */
+
+.swipe {
+    overflow: hidden;
+    visibility: hidden;
+    position: relative;
+}
+.swipe-wrap {
+    overflow: hidden;
+    position: relative;
+}
+.swipe-wrap > div {
+    float: left;
+    width: 100%;
+    position: relative;
+}
+/* Search Bar */
+
+.search-bar {
+    *position: absolute;
+    background: none;
+    padding: 5px;
+    *top: 43px;
+    border: none;
+}
+.search-bar label {
+    opacity: 0.85
+}
+.search-bar input:focus - .search-bar label  {
+    opacity: 1;
+}
+/* Modal */
+
+.modal {
+    z-index: 11;
+}
+.isTablet .modal:not(.default) {
+    top: 0;
+    right: 0;
+    bottom: 20%;
+    *left: 20%;
+    left: 0;
+    overflow: visible;
+    min-height: 240px;
+    *width: 80%;
+    width: 100%;
+    height: 100%;
+}
+.policy {
+    width: 100% !important;
+    left: 0 !important;
+}
+/* Utility */
+
+[ng-cloak] {
+    display: none;
+}
+.strike {
+    text-decoration: line-through;
+}
+label {
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: 200;
+}
+.label {
+    display: inline-block;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 200;
+    line-height: 1;
+    color: #FFFFFF;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    margin-right: 5px;
+    margin-bottom: 4px;
+}
+.label[href],
+.label[href]:focus {
+    color: #FFFFFF;
+    text-decoration: none;
+    cursor: pointer;
+}
+.label:empty {
+    display: none;
+}
+.label-default {
+    background-color: #999999;
+}
+.label-default[href],
+.label-default[href]:focus {
+    background-color: #808080;
+}
+.label-primary {
+    background-color: #007AFF;
+}
+.label-primary[href],
+.label-primary[href]:focus {
+    background-color: #0062CC;
+}
+.label-success {
+    background-color: #4CD964;
+}
+.label-success[href],
+.label-success[href]:focus {
+    background-color: #2AC845;
+}
+.label-info {
+    background-color: #34AADC;
+}
+.label-info[href],
+.label-info[href]:focus {
+    background-color: #218EBD;
+}
+.label-warning {
+    background-color: #FFCC00;
+}
+.label-warning[href],
+.label-warning[href]:focus {
+    background-color: #CCA300;
+}
+.label-danger {
+    background-color: #FF3B30;
+}
+.label-danger[href],
+.label-danger[href]:focus {
+    background-color: #FC0D00;
+}
+hr {
+    height: 0;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    margin-top: 22px;
+    margin-bottom: 22px;
+    border: 0;
+    border-top: 1px solid #EEEEEE;
+}
+hr.thin {
+    margin: 7px auto;
+}
+.row-wrap {
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+}
+.text-center {
+    text-align: center;
+}
+.text-left {
+    text-align: left
+}
+.text-right {
+    text-align: right
+}
+.loaded {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    width: 100%;
+}
+.swipe .image > div {
+    width: 100%;
+    height: 250px;
+}
+/* List Item Option Buttons*/
+
+.item-options {
+    background-color: #eee;
+}
+.item-options .button {
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    margin: 0 15px;
+    color: #666;
+}
+.block-list,
+.isTablet .deal-item,
+.isTablet .shop-item {
+    background-color: #f8f8f8;
+    border: none;
+}
+.isTablet .deal-item .item-content,
+.isTablet .shop-item .item-content {
+    padding: 0;
+}
+.deal-item .card {
+    margin: 0;
+}
+.deal-item .item,
+.shop-item .item {
+    border: none;
+}
+.deal-item .item-body {
+    background: #eee;
+    padding: 0;
+}
+.deal-item .item-body h2 {
+    color: #222;
+    overflow: hidden;
+    margin-top: 11px;
+    margin-bottom: 11px;
+}
+.isPhone .deal-item {
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-bottom: 10px;
+}
+.isPhone .deal-top-area {
+    height: 190px;
+}
+.isPhone .deal-item .deal-image {
+    height: 120px;
+}
+.isPhone .deal-item-heading h5 {
+    /*font-size: 12px;*/
+    margin-bottom: 4px;
+}
+.isPhone .deal-item-heading small {
+    font-size: 55%;
+}
+.isPhone .deal-item-heading {
+    height: 70px;
+}
+.landscape .deal-item {
+    height: 100%;
+}
+.landscape .deal-top-area {
+    height: 300px;
+}
+.deal-item {
+    display: block;
+    position: relative;
+    margin-bottom: 5px;
+    z-index: 1;
+    color: #FFFFFF;
+    height: 100%;
+    border: none;
+}
+.deal-item a {
+    display: block;
+}
+.list-group-item.deal-item {
+    margin: 0;
+}
+.deal-item:hover,
+.deal-item:active {
+    color: #FFFFFF;
+}
+.deal-inner-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #FFFFFF;
+    border-radius: 5px;
+    display: block;
+}
+.deal-top-area {
+    width: 100%;
+    background: white;
+    /*height: 300px;*/
+    height: auto;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    /*z-index:2;*/
+    text-align: center;
+}
+.deal-item:hover,
+.deal-item:active {
+    text-decoration: none;
+}
+.deal-item .deal-image {
+    /*height: 100%;*/
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    height: 215px;
+    width: 100%;
+}
+.deal-item .deal-image .loading {
+    width: 100%;
+    display: block;
+    height: 100%;
+}
+.deal-item-heading {
+    position: relative;
+    background: #eee;
+    /*height: 80px;*/
+    display: block;
+    width: 100%;
+}
+.deal-item-heading h3,
+.deal-item-heading h4,
+.deal-item-heading h5 {
+    color: #222;
+    height: 34px;
+    overflow: hidden;
+    margin-top: 11px;
+    margin-bottom: 11px;
+}
+.deal-item-heading small {
+    text-transform: uppercase;
+    font-size: .8em;
+}
+.deal-item-heading .deal-item-stats {
+    overflow: hidden;
+    border-top: 2px solid #ddd;
+    line-height: 2em;
+    padding: 0;
+}
+.deal-item-heading .deal-item-stats * {
+    height: 100%;
+}
+.shop-item .deal-inner-wrap {
+    background: none;
+}
+.shop-item .deal-top-area {
+    height: auto;
+}
+.shop-item .shop-text,
+.deal-item .deal-text {
+    line-height: 40px;
+    display: block;
+    background: #eee;
+    height: 40px;
+    overflow: hidden;
+}
+.deal-item .deal-text {
+    height: 100px;
+}
+.shop-item .shop-text div {
+    border-left: 1px solid #ddd;
+}
+.shop-item .shop-text div:first-child {
+    border-right: 1px solid #ddd;
+    border-left: none;
+}
+.isPhone .btn-fav {
+    width: 25%;
+}
+.btn-fav {
+    float: left;
+}
+.scroll-refresher {
+    height: 90px;
+    top:-90px;
+}
+.text-refreshing,
+.text-pulling {
+    font-size: .5em !important;
+}
+.angular-google-map-container { height: 400px; }
+
+
+
+/**
+ * angular-motion
+ * @version v0.3.2 - 2014-02-11
+ * @link https://github.com/mgcrea/angular-motion
+ * @author Olivier Louvignes <olivier@mg-crea.com>
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */
+
+.am-fade-and-scale {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-fade-and-scale.ng-enter,
+.am-fade-and-scale.am-fade-and-scale-add,
+.am-fade-and-scale.ng-hide-remove,
+.am-fade-and-scale.ng-move {
+    -webkit-animation-name: fadeAndScaleIn;
+    animation-name: fadeAndScaleIn
+}
+.am-fade-and-scale.ng-leave,
+.am-fade-and-scale.am-fade-and-scale-remove,
+.am-fade-and-scale.ng-hide {
+    -webkit-animation-name: fadeAndScaleOut;
+    animation-name: fadeAndScaleOut
+}
+.am-fade-and-scale.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: fadeAndScaleIn;
+    animation-name: fadeAndScaleIn
+}
+.am-fade-and-scale.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-fade-and-scale.ng-leave {
+    -webkit-animation-name: fadeAndScaleOut;
+    animation-name: fadeAndScaleOut
+}
+@-webkit-keyframes fadeAndScaleIn {
+    from {
+        opacity: 0;
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7)
+    }
+    to {
+        opacity: 1
+    }
+}
+@keyframes fadeAndScaleIn {
+    from {
+        opacity: 0;
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7)
+    }
+    to {
+        opacity: 1
+    }
+}
+@-webkit-keyframes fadeAndScaleOut {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7)
+    }
+}
+@keyframes fadeAndScaleOut {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7)
+    }
+}
+.am-fade-and-slide-top {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-fade-and-slide-top.am-fade-and-slide-top-add,
+.am-fade-and-slide-top.ng-hide-remove,
+.am-fade-and-slide-top.ng-move {
+    -webkit-animation-name: fadeAndSlideFromTop;
+    animation-name: fadeAndSlideFromTop
+}
+.am-fade-and-slide-top.am-fade-and-slide-top-remove,
+.am-fade-and-slide-top.ng-hide {
+    -webkit-animation-name: fadeAndSlideToTop;
+    animation-name: fadeAndSlideToTop
+}
+.am-fade-and-slide-top.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: fadeAndSlideFromTop;
+    animation-name: fadeAndSlideFromTop
+}
+.am-fade-and-slide-top.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-fade-and-slide-top.ng-leave {
+    -webkit-animation-name: fadeAndSlideToTop;
+    animation-name: fadeAndSlideToTop
+}
+.am-fade-and-slide-right {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-fade-and-slide-right.am-fade-and-slide-right-add,
+.am-fade-and-slide-right.ng-hide-remove,
+.am-fade-and-slide-right.ng-move {
+    -webkit-animation-name: fadeAndSlideFromRight;
+    animation-name: fadeAndSlideFromRight
+}
+.am-fade-and-slide-right.am-fade-and-slide-right-remove,
+.am-fade-and-slide-right.ng-hide {
+    -webkit-animation-name: fadeAndSlideToRight;
+    animation-name: fadeAndSlideToRight
+}
+.am-fade-and-slide-right.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: fadeAndSlideFromRight;
+    animation-name: fadeAndSlideFromRight
+}
+.am-fade-and-slide-right.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-fade-and-slide-right.ng-leave {
+    -webkit-animation-name: fadeAndSlideToRight;
+    animation-name: fadeAndSlideToRight
+}
+.am-fade-and-slide-bottom {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-fade-and-slide-bottom.am-fade-and-slide-bottom-add,
+.am-fade-and-slide-bottom.ng-hide-remove,
+.am-fade-and-slide-bottom.ng-move {
+    -webkit-animation-name: fadeAndSlideFromBottom;
+    animation-name: fadeAndSlideFromBottom
+}
+.am-fade-and-slide-bottom.am-fade-and-slide-bottom-remove,
+.am-fade-and-slide-bottom.ng-hide {
+    -webkit-animation-name: fadeAndSlideToBottom;
+    animation-name: fadeAndSlideToBottom
+}
+.am-fade-and-slide-bottom.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: fadeAndSlideFromBottom;
+    animation-name: fadeAndSlideFromBottom
+}
+.am-fade-and-slide-bottom.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-fade-and-slide-bottom.ng-leave {
+    -webkit-animation-name: fadeAndSlideToBottom;
+    animation-name: fadeAndSlideToBottom
+}
+.am-fade-and-slide-left {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-fade-and-slide-left.am-fade-and-slide-left-add,
+.am-fade-and-slide-left.ng-hide-remove,
+.am-fade-and-slide-left.ng-move {
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards;
+    -webkit-animation-name: fadeAndSlideFromLeft;
+    animation-name: fadeAndSlideFromLeft
+}
+.am-fade-and-slide-left.am-fade-and-slide-left-remove,
+.am-fade-and-slide-left.ng-hide {
+    -webkit-animation-name: fadeAndSlideToLeft;
+    animation-name: fadeAndSlideToLeft
+}
+.am-fade-and-slide-left.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: fadeAndSlideFromLeft;
+    animation-name: fadeAndSlideFromLeft
+}
+.am-fade-and-slide-left.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-fade-and-slide-left.ng-leave {
+    -webkit-animation-name: fadeAndSlideToLeft;
+    animation-name: fadeAndSlideToLeft
+}
+@-webkit-keyframes fadeAndSlideFromTop {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(-20%);
+        transform: translateY(-20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@keyframes fadeAndSlideFromTop {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(-20%);
+        transform: translateY(-20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@-webkit-keyframes fadeAndSlideToTop {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateY(-20%);
+        transform: translateY(-20%)
+    }
+}
+@keyframes fadeAndSlideToTop {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateY(-20%);
+        transform: translateY(-20%)
+    }
+}
+@-webkit-keyframes fadeAndSlideFromRight {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(20%);
+        transform: translateX(20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@keyframes fadeAndSlideFromRight {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(20%);
+        transform: translateX(20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@-webkit-keyframes fadeAndSlideToRight {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateX(20%);
+        transform: translateX(20%)
+    }
+}
+@keyframes fadeAndSlideToRight {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateX(20%);
+        transform: translateX(20%)
+    }
+}
+@-webkit-keyframes fadeAndSlideFromBottom {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(20%);
+        transform: translateY(20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@keyframes fadeAndSlideFromBottom {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(20%);
+        transform: translateY(20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@-webkit-keyframes fadeAndSlideToBottom {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateY(20%);
+        transform: translateY(20%)
+    }
+}
+@keyframes fadeAndSlideToBottom {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateY(20%);
+        transform: translateY(20%)
+    }
+}
+@-webkit-keyframes fadeAndSlideFromLeft {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(-20%);
+        transform: translateX(-20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@keyframes fadeAndSlideFromLeft {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(-20%);
+        transform: translateX(-20%)
+    }
+    to {
+        opacity: 1
+    }
+}
+@-webkit-keyframes fadeAndSlideToLeft {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateX(-20%);
+        transform: translateX(-20%)
+    }
+}
+@keyframes fadeAndSlideToLeft {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: translateX(-20%);
+        transform: translateX(-20%)
+    }
+}
+.am-fade {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards;
+    opacity: 1
+}
+.am-fade.am-fade-add,
+.am-fade.ng-hide-remove,
+.am-fade.ng-move {
+    -webkit-animation-name: fadeIn;
+    animation-name: fadeIn
+}
+.am-fade.am-fade-remove,
+.am-fade.ng-hide {
+    -webkit-animation-name: fadeOut;
+    animation-name: fadeOut
+}
+.am-fade.ng-enter,
+.am-fade.ng-show {
+    visibility: hidden;
+    -webkit-animation-name: fadeIn;
+    animation-name: fadeIn
+}
+.am-fade.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-fade.ng-leave,
+.am-fade.ng-hide {
+    -webkit-animation-name: fadeOut;
+    animation-name: fadeOut
+}
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}
+@-webkit-keyframes fadeOut {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0
+    }
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0
+    }
+}
+.modal-backdrop.am-fade,
+.aside-backdrop.am-fade {
+    background: rgba(0, 0, 0, .5);
+    -webkit-animation-duration: .15s;
+    animation-duration: .15s
+}
+.am-flip-x {
+    -webkit-animation-duration: .4s;
+    animation-duration: .4s;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-flip-x.am-flip-x-add,
+.am-flip-x.ng-hide-remove,
+.am-flip-x.ng-move {
+    -webkit-animation-name: flipInXBounce;
+    animation-name: flipInXBounce
+}
+.am-flip-x.am-flip-x-remove,
+.am-flip-x.ng-hide {
+    -webkit-animation-name: flipOutX;
+    animation-name: flipOutX
+}
+.am-flip-x.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: flipInXBounce;
+    animation-name: flipInXBounce
+}
+.am-flip-x.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-flip-x.ng-leave {
+    -webkit-animation-name: flipOutX;
+    animation-name: flipOutX
+}
+.am-flip-x-linear {
+    -webkit-animation-duration: .4s;
+    animation-duration: .4s;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-flip-x-linear.am-flip-x-add,
+.am-flip-x-linear.ng-hide-remove,
+.am-flip-x-linear.ng-move {
+    -webkit-animation-name: flipInX;
+    animation-name: flipInX
+}
+.am-flip-x-linear.am-flip-x-remove,
+.am-flip-x-linear.ng-hide {
+    -webkit-animation-name: flipOutX;
+    animation-name: flipOutX
+}
+.am-flip-x-linear.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: flipInX;
+    animation-name: flipInX
+}
+.am-flip-x-linear.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-flip-x-linear.ng-leave {
+    -webkit-animation-name: flipOutX;
+    animation-name: flipOutX
+}
+@-webkit-keyframes flipInX {
+    from {
+        opacity: 0;
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        transform: perspective(400px) rotateX(90deg)
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        transform: perspective(400px) rotateX(0deg)
+    }
+}
+@keyframes flipInX {
+    from {
+        opacity: 0;
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        transform: perspective(400px) rotateX(90deg)
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        transform: perspective(400px) rotateX(0deg)
+    }
+}
+@-webkit-keyframes flipInXBounce {
+    from {
+        opacity: 0;
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        transform: perspective(400px) rotateX(90deg)
+    }
+    40% {
+        -webkit-transform: perspective(400px) rotateX(-10deg);
+        transform: perspective(400px) rotateX(-10deg)
+    }
+    70% {
+        -webkit-transform: perspective(400px) rotateX(10deg);
+        transform: perspective(400px) rotateX(10deg)
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        transform: perspective(400px) rotateX(0deg)
+    }
+}
+@keyframes flipInXBounce {
+    from {
+        opacity: 0;
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        transform: perspective(400px) rotateX(90deg)
+    }
+    40% {
+        -webkit-transform: perspective(400px) rotateX(-10deg);
+        transform: perspective(400px) rotateX(-10deg)
+    }
+    70% {
+        -webkit-transform: perspective(400px) rotateX(10deg);
+        transform: perspective(400px) rotateX(10deg)
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        transform: perspective(400px) rotateX(0deg)
+    }
+}
+@-webkit-keyframes flipOutX {
+    from {
+        opacity: 1;
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        transform: perspective(400px) rotateX(0deg)
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        transform: perspective(400px) rotateX(90deg)
+    }
+}
+@keyframes flipOutX {
+    from {
+        opacity: 1;
+        -webkit-transform: perspective(400px) rotateX(0deg);
+        transform: perspective(400px) rotateX(0deg)
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: perspective(400px) rotateX(90deg);
+        transform: perspective(400px) rotateX(90deg)
+    }
+}
+.am-slide-top {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-slide-top.am-fade-and-slide-top-add,
+.am-slide-top.ng-hide-remove,
+.am-slide-top.ng-move {
+    -webkit-animation-name: slideFromTop;
+    animation-name: slideFromTop
+}
+.am-slide-top.am-fade-and-slide-top-remove,
+.am-slide-top.ng-hide {
+    -webkit-animation-name: slideToTop;
+    animation-name: slideToTop
+}
+.am-slide-top.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: slideFromTop;
+    animation-name: slideFromTop
+}
+.am-slide-top.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-slide-top.ng-leave {
+    -webkit-animation-name: slideToTop;
+    animation-name: slideToTop
+}
+.am-slide-right {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-slide-right.am-fade-and-slide-right-add,
+.am-slide-right.ng-hide-remove,
+.am-slide-right.ng-move {
+    -webkit-animation-name: slideFromRight;
+    animation-name: slideFromRight
+}
+.am-slide-right.am-fade-and-slide-right-remove,
+.am-slide-right.ng-hide {
+    -webkit-animation-name: slideToRight;
+    animation-name: slideToRight
+}
+.am-slide-right.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: slideFromRight;
+    animation-name: slideFromRight
+}
+.am-slide-right.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-slide-right.ng-leave {
+    -webkit-animation-name: slideToRight;
+    animation-name: slideToRight
+}
+.am-slide-bottom {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-slide-bottom.am-fade-and-slide-bottom-add,
+.am-slide-bottom.ng-hide-remove,
+.am-slide-bottom.ng-move {
+    -webkit-animation-name: slideFromBottom;
+    animation-name: slideFromBottom
+}
+.am-slide-bottom.am-fade-and-slide-bottom-remove,
+.am-slide-bottom.ng-hide {
+    -webkit-animation-name: slideToBottom;
+    animation-name: slideToBottom
+}
+.am-slide-bottom.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: slideFromBottom;
+    animation-name: slideFromBottom
+}
+.am-slide-bottom.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-slide-bottom.ng-leave {
+    -webkit-animation-name: slideToBottom;
+    animation-name: slideToBottom
+}
+.am-slide-left {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards
+}
+.am-slide-left.am-fade-and-slide-left-add,
+.am-slide-left.ng-hide-remove,
+.am-slide-left.ng-move {
+    -webkit-animation-name: slideFromLeft;
+    animation-name: slideFromLeft
+}
+.am-slide-left.am-fade-and-slide-left-remove,
+.am-slide-left.ng-hide {
+    -webkit-animation-name: slideToLeft;
+    animation-name: slideToLeft
+}
+.am-slide-left.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: slideFromLeft;
+    animation-name: slideFromLeft
+}
+.am-slide-left.ng-enter.ng-enter-active {
+    visibility: visible
+}
+.am-slide-left.ng-leave {
+    -webkit-animation-name: slideToLeft;
+    animation-name: slideToLeft
+}
+@-webkit-keyframes slideFromTop {
+    from {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%)
+    }
+}
+@keyframes slideFromTop {
+    from {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%)
+    }
+}
+@-webkit-keyframes slideToTop {
+    to {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%)
+    }
+}
+@keyframes slideToTop {
+    to {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%)
+    }
+}
+@-webkit-keyframes slideFromRight {
+    from {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+}
+@keyframes slideFromRight {
+    from {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+}
+@-webkit-keyframes slideToRight {
+    to {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+}
+@keyframes slideToRight {
+    to {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+}
+@-webkit-keyframes slideFromBottom {
+    from {
+        -webkit-transform: translateY(100%);
+        transform: translateY(100%)
+    }
+}
+@keyframes slideFromBottom {
+    from {
+        -webkit-transform: translateY(100%);
+        transform: translateY(100%)
+    }
+}
+@-webkit-keyframes slideToBottom {
+    to {
+        -webkit-transform: translateY(100%);
+        transform: translateY(100%)
+    }
+}
+@keyframes slideToBottom {
+    to {
+        -webkit-transform: translateY(100%);
+        transform: translateY(100%)
+    }
+}
+@-webkit-keyframes slideFromLeft {
+    from {
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%)
+    }
+}
+@keyframes slideFromLeft {
+    from {
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%)
+    }
+}
+@-webkit-keyframes slideToLeft {
+    to {
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%)
+    }
+}
+@keyframes slideToLeft {
+    to {
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%)
+    }
+}

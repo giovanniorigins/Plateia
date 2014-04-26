@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Marketplace</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+
+    <!-- Styles-->
+    <link rel="stylesheet" href="css/ionic.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <!--<link rel="stylesheet" href="css/custom-styles.css" />-->
+
+    <!-- Framework Scripts-->
+    <script type="text/javascript" src="intelxdk.js"></script>
+    <script type="text/javascript" src="xhr.js"></script>
+    <!--<script type="text/javascript" src="cordova.js"></script>-->
+
+    <!-- Needed for Cordova/PhoneGap (will be a 404 during development)-->
+    <script type="text/javascript" src="lib/modernizr.js"></script>
+    <script type="text/javascript" src="lib/ionic.min.js"></script>
+    <script type="text/javascript" src="lib/fastclick.js"></script>
+    <script type="text/javascript" src="js/appMobi.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/utility.js"></script>
+    <script type="text/javascript" src="js/swipe.js"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAPAQrP_1XAvkxlG4G0ljjfmyPYzEfWCi4&sensor=false"></script>-->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+
+    <!-- AngularJ Scrpts-->
+    <script type="text/javascript" src="lib/angular/angular.js"></script>
+    <script type="text/javascript" src="lib/angular/angular-route.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular-animate.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular-touch.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular-resource.min.js"></script>
+    <!--<script type="text/javascript" src="lib/angular/angular-strap.min.js"></script>-->
+    <script type="text/javascript" src="lib/ionic-angular.min.js"></script>
+    <script type="text/javascript" src="lib/angular-ui/angular-ui-router.js"></script>
+    <script type="text/javascript" src="js/angular-cache.min.js"></script>
+
+    <!-- App Scripts-->
+    <script type="text/javascript" src="js/services.js"></script>
+    <script type="text/javascript" src="js/controllers.js"></script>
+    <script type="text/javascript" src="js/plugins.js"></script>
+    <script type="text/javascript" src="js/modules.js"></script>
+    <script type="text/javascript" src="js/filters.js"></script>
+    <script type="text/javascript" src="js/directives.js"></script>
+    <script src="http://debug-software.intel.com/target/target-script-min.js#WEGP4lWuiiRlnH7KOISz_wDOJugBYBBnZ_zc8YkyjOY"></script>
+    <script type="text/javascript">
+        /* This code is used to run as soon as Intel activates */
+        function onDeviceReady() {
+            document.addEventListener("intel.xdk.device.connection.update", getStarted, false);
+
+            if (intel.xdk.isphone) {
+                //lock orientation
+                intel.xdk.device.setAutoRotate(true);
+                intel.xdk.device.setRotateOrientation("portrait");
+            } else {
+                intel.xdk.device.setAutoRotate(true);
+                intel.xdk.device.setRotateOrientation("any");
+            }
+
+            intel.xdk.device.updateConnection();
+        }
+
+        var getStarted = function() {
+            if (intel.xdk.device.connection === 'none' || intel.xdk.device.connection === 'unknown') {
+                navigator.splashscreen.show();
+                intel.xdk.notification.alert(
+                    'There is currently a problem with your network connection. Please try again later',
+                    'Network Error',
+                    'OK'
+                );
+            } else {
+                angular.bootstrap(document, ['plateia']);
+            }
+            document.removeEventListener("intel.xdk.device.connection.update", getStarted, false);
+        }
+
+        document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
+    </script>
+</head>
+
+<body ng-controller="BodyCtrl" ng-class="[ADappState.Orientation]" bindonce bo-class="[ADappState.Type]">
+
+    <ion-side-menus ng-cloak>
+        <ion-side-menu-content>
+            <ion-nav-bar class="bar-positive" animation="nav-title-slide-ios7">
+                <ion-nav-back-button class="button button-icon ion-chevron-left" ng-class="{'hide':ADappState.depth==1}">
+                    {{getPreviousTitle() || 'Back'}}
+                </ion-nav-back-button>
+                <ion-nav-buttons side="left">
+                    <button menu-toggle="left" class="button button-icon icon ion-navicon" ng-show="ADappState.depth==1"></button>
+                </ion-nav-buttons>
+            </ion-nav-bar>
+
+            <ion-nav-view animation="slide-left-right-ios7"></ion-nav-view>
+
+        </ion-side-menu-content>
+
+        <ion-side-menu side="left">
+
+            <ion-content has-header="true">
+                <ul class="list" id="main-nav">
+
+                    <a ng-if="appData.User === null" class="item item-icon-left" href="#" nourl fast-click="siteLogin();">
+                        <span class="icon ion-log-in"></span>
+                        Login
+                    </a>
+
+                    <a ng-if="appData.User !== null" class="item item-icon-left" href="#" nourl fast-click="openProfile();">
+                        <span class="icon ion-person"></span>
+                        {{appData.User.fullname}}
+                    </a>
+
+                    <a class="item item-icon-left active" nav-item menu-close href="#/" ui-sref-active="active">
+                        <span class="icon ion-home"></span>
+                        Home
+                    </a>
+
+                    <a class="item item-icon-left" nav-item menu-close href="#/shops" ui-sref-active="active">
+                        <span class="icon ion-bag"></span>
+                        Shops
+                    </a>
+
+                    <a class="item item-icon-left" nav-item menu-close href="#/categories" ui-sref-active="active">
+                        <span class="icon ion-filing"></span>
+                        Categories
+                    </a>
+
+                    <a class="item item-icon-left" nav-item menu-close href="#/activity" ui-sref-active="active">
+                        <span class="icon ion-ios7-bell"></span>
+                        Notifications
+                    </a>
+
+                    <a class="item item-icon-left" nav-item menu-close href="#/settings" ui-sref-active="active">
+                        <span class="icon ion-gear-a"></span>
+                        Settings
+                    </a>
+
+                    <!--<a nourl href="#" class="item" ng-repeat="item in list">
+                        {{item.text}}
+                    </a>-->
+                </ul>
+            </ion-content>
+        </ion-side-menu>
+    </ion-side-menus>
+
+    <script type="text/ng-template" id="partials/deal-modal.tpl.html">
+<div class="modal" id="DealModal" ng-controller="DealCtrl">
+    <div ng-switch on="state">
+
+        <ion-pane ng-switch-when="main" class="slide-left-right-ios7">
+            <ion-header-bar bindonce class="bar-calm">
+                <div class="buttons">
+                    <button class="button button-icon icon ion-chevron-left" ng-click="closeModal();">Close</button>
+                </div>
+                <h1 class="title" bo-html="activeDeal.title"></h1>
+            </ion-header-bar>
+            <ion-content>
+                <div class="text-center stable-bg calm" bindonce>
+                    <div class="row">
+                        <small class="col text-left" bo-class="{'isPhone':'col-50', 'isTablet':'col-25'}[ADappState.Type]">
+                            <strong class="padding positive-bg light" bo-text="'$'+activeDeal.new_price"></strong>
+                            <i class="dark strike" bo-text="'$'+activeDeal.list_price"></i>
+                        </small>
+
+                        <small class="col" bo-class="{'isPhone':'col-50', 'isTablet':'col-75'}[ADappState.Type]">
+                            <span class="ion ion-clock"></span>
+                            <span class bo-text="'Ends '+(toExpire(activeDeal.expire_date))"></span>
+                        </small>
+                    </div>
+
+                </div>
+
+                <div id='slider' class='swipe'>
+                    <div class='swipe-wrap'>
+                        <div class="image" ng-repeat="image in dealImages">
+                            <div class="icon ion-loading-a" rn-lazy-background="image.path" rn-lazy-loading-class="icon ion-loading-a" rn-lazy-loaded-class="loaded"></div>
+                        </div>
+                    </div>
+                    <p class="text-center" ng-bind="swipeCurrent + ' of ' + swipeMax"></p>
+                </div>
+
+                <div class="button-bar" style="background-color: #d9d9d9;color: #222;">
+                    <span class="button button-icon">
+                        {{activeDeal.thumbs_num}}
+                        <i class="icon ion-heart"></i>
+                    </span>
+
+                    <a class="button button-icon icon ion-thumbsup" ng-click="thumbs(activeDeal, 'up');"></a>
+
+                    <a class="button button-icon icon ion-thumbsdown" ng-click="thumbs(activeDeal, 'down');"></a>
+
+                    <a class="button button-icon icon ion-share" ng-click="share(activeDeal)"></a>
+
+                    <a ng-if="hasDirections==true" class="button button-icon icon ion-location" ng-click="toggleState();"></a>
+                </div>
+
+                <div class="padding">
+                    <div class="row">
+                        <div class="col">
+                            <div class="deal-code" bindonce="activeDeal.coupon_code" ng-if="activeDeal.coupon_code!=''">
+                                <h3 class>Coupon Code</h3>
+                                <p class bo-text="activeDeal.coupon_code"></p>
+                                <hr class="thin">
+                            </div>
+
+                            <div class="deal-description" bindonce="activeDeal.description">
+                                <h3 class>Description</h3>
+                                <p class ng-if="activeDeal.description.length == 0" bo-html="activeDeal.short_description"></p>
+                                <p class ng-if="activeDeal.description.length > 0" bo-html="activeDeal.description"></p>
+                                <p class ng-if="hasDirections==true">
+                                    <hr class="thin">
+                                    <a class="positive" ng-click="toggleState();"
+                                       bo-html="'<span class=\'ion ion-location\'></span> Directions to '+activeDeal.shop_title"></a>
+                                    <br>
+                                {{activeDeal.shop.shop_locations}}
+                                </p>
+                                <hr class="thin">
+                            </div>
+
+                            <div ng-if="activeDeal.coupon_tags.length>1" bindonce="activeDeal.coupon_tags">
+                                <h3 class>Tags</h3>
+                                <h4>
+                                    <a href="#" nourl class="label label-primary tags" ng-repeat="tag in activeDeal.coupon_tags track by $index" bo-html="tag+' <span class=\'ion ion-ios7-search-strong\'></span>'" ng-click="closeModal();searchTag(tag);"></a>
+
+                                </h4>
+
+
+                                <hr class="thin">
+                            </div>
+
+                            <div class="deals-related isPhone">
+                                <h3 class bindonce="activeDeal.category_title">Related Deals in
+                                    <a href="#" nourl class="label label-primary tags" bo-html="' <span class=\'icon ion-navicon-round\'></span> '+activeDeal.category_title" ng-click="closeModal();goTo('
+        categories ', activeDeal.category_id);"></a>
+                                </h3>
+                                <ion-list animation="am-fade" item-type="item">
+                                    <ion-item item="deal" class="item-thumbnail-left" bindonce="relatedDeals" ng-href="#" nourl ng-repeat="deal in relatedDeals | limitTo:20" ng-click="closeModal();selectDeal(deal, true);">
+                                        <img bo-src="deal.coupon_image">
+                                        <h2 bo-html="deal.title+ ' <br /> <h3> from '+deal.shop_title+ ' </h3>'"></h2>
+                                        <p bo-text="(deal.discount_amount|number:0)+ '% Off'"></p>
+                                        <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+                                    </ion-item>
+                                </ion-list>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </ion-content>
+        </ion-pane>
+
+        <ion-pane ng-switch-when="map" class="slide-left-right-ios7">
+            <ion-header-bar bindonce class="bar-calm">
+                <div class="buttons">
+                    <button class="button button-icon icon ion-chevron-left" ng-click="toggleState();"></button>
+                </div>
+                <h1 class="title" bo-html="'<i class=\'icon ion-location\'></i> Directions to ' + activeDeal.shop_title"></h1>
+            </ion-header-bar>
+            <ion-content>
+                <ion-pane>
+                    <span ng-if="map !== undefined && destinations !== undefined">
+                        <google-map center="map.center" zoom="map.zoom" draggable="true" options="map.options" control="map.control" events="map.events">
+                            <markers models='destinations' fit='true' coords='"self"'></markers>
+                            <marker coords='destinations.coords'></marker>
+                        </google-map>
+                        <button ng-click="getInstance()" class="button">Get Object</button>
+                    </span>
+                    <hr>
+                    <!--<div id="map-canvas"></div>-->
+                    <ion-pane>
+                        <div class="directions"></div>
+                    </ion-pane>
+                </ion-pane>
+            </ion-content>
+        </ion-pane>
+    </div>
+</div>
+    </script>
+    <script type="text/ng-template" id="partials/map-aside.tpl.html">
+
+        <div class="modal default" id="MapAside" ng-controller="MapCtrl">
+            <ion-header-bar bindonce class="bar-calm">
+                <div class="buttons">
+                    <button class="button button-icon icon ion-close-round" ng-click="closeModal();">Close</button>
+                </div>
+                <h1 class="title" bo-html="'<span class=\'ion ion-location\'></span> Directions to '+activeShop.title"> </h1>
+            </ion-header-bar>
+
+             <ion-content>
+                <div id="map-canvas" style="height:300px"> </div>
+                <ion-pane class="padding">
+                    <div class="directions"></div>
+                </ion-pane>
+            </ion-content>
+        </div>
+        <!-- /.aside-->
+    </script>
+    <script type="text/ng-template" id="partials/login-aside.tpl.html">
+
+        <div class="modal default" id="LoginAside">
+            <ion-header-bar bindonce class="bar-balanced">
+                <h1 class="title" bo-html="'<span class=\' ion ion-log-in \'></span>&nbsp;Sign In'"></h1>
+                <div class="buttons">
+                    <button class="button button-icon icon ion-close-round" ng-click="closeModal();">Close</button>
+                </div>
+            </ion-header-bar>
+
+            ion-content>
+                <form class="padding" role="form">
+                    <div class="list">
+                        <label class="item item-input">
+                            <span class="input-label"> Username </span>
+                            <input type="text" name="username" ng-model="loginData.username" autofocus required>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label"> Password </span>
+                            <input type="password" name="password" ng-model="loginData.password" required ng-keydown="startloginKeydown($event);">
+                        </label>
+                    </div>
+                    <button type="button" class="button button-full button-positive" ng-click="startLogin();">Sign in</button>
+
+                 </form>
+            </ion-content>
+        </div>
+    </script>
+    <script type="text/ng-template" id="partials/profile-aside.tpl.html">
+
+        <div class="modal"
+        id="ProfileAside"> <ion-header-bar bindonce class="bar-calm"> <div class="buttons"> <button class="button button-icon icon ion-close-round"
+        ng-click="closeModal();">Close</button>
+                </div> <h1 class="title"
+        bo-html="appData.User.fullname"> </h1>
+            </ion-header-bar>
+
+         <ion-content>
+
+         <div class="row"
+        data-bindonce> <div class="col col-33"> <img bo-src="appData.User.avatar"
+        class="img-rounded img-responsive"> </div>
+                    <div class="col col-66">
+                        <h4 data-bo-html="'Hello, ' + appData.User.fullname"></h4> <div class="row"> <div class="col col-50">
+            User since: <br /> <span data-bo-text="appData.User.date_reg|date:'mediumDate'"> </span>
+                            </div> <div class="col col-50">
+            Faved Shops: <br /> <span data-bo-text> </span>
+                            </div> </div>
+                    </div> </div>
+                <hr class="thin">
+                <div class="row">
+                    <h2>Faved Shops</h2> <div class="col">
+
+         </div>
+
+                </div> <div class="aside-footer"> <button type="submit"
+        class="btn btn-primary"
+        data-ng-click="closeModal();accountLogout();"> Logout </button>
+                </div> </ion-content>
+        </div>
+    </script>
+    <script type="text/ng-template" id="partials/register-aside.tpl.html">
+
+        <div class="modal default"
+        id="RegisterAside"
+        ng-controller="RegistrationCtrl"> <ion-header-bar bindonce class="bar-balanced"> <h1 class="title"
+        bo-html="'<span class=\'ion ion-compose\'></span> Register with Email'"> </h1>
+                <div class="buttons">
+                    <button class="button button-icon icon ion-close-round" ng-click="closeModal();">Close</button> </div>
+            </ion-header-bar>
+
+         <ion-content> <div id="failures"
+        ng-
+        if="failures"> <div class="list"> <a class="item item-icon-left"
+        href="#"
+        ng-init="hideThis=false"
+        ng-click="hideThis=true"
+        ng-repeat="failure in failures"
+        ng-hide="hideThis"> <i class="icon ion-alert"> </i>
+                            <p ng-bind="failure"></p> . </a>
+                    </div> </div>
+                <form class="padding list" role="form" name="register_Form">
+                    <div class="form-group" ng-class="{'has-warning': register_Form.username.$valid==false && register_Form.username.$dirty, 'has-success': register_Form.username.$valid}">
+                        <label for="field_username" class="item item-input">
+
+                            <span class="input-label">Username *</span> <input type="text"
+        class="form-control"
+        id="field_username"
+        placeholder="Username"
+        name="username"
+        ng-pattern="regex.username"
+        ng-minlength="3"
+        ng-maxlength="50"
+        ng-model="registerData.username"
+        required autofocus> </label>
+                        <div class>
+
+                        </div> </div>
+                    <div class="form-group" ng-class="{'has-warning': register_Form.name.$valid==false && register_Form.fullname.$dirty, 'has-success': register_Form.fullname.$valid}">
+                        <label for="field_fullname" class="item item-input">
+                            <span class="input-label">Name*</span> <input type="text"
+        class="form-control"
+        id="field_fullname"
+        placeholder="Name"
+        name="fullname"
+        ng-pattern="regex.fullname"
+        ng-minlength="2"
+        ng-maxlength="250"
+        ng-model="registerData.fullname"
+        required> </label>
+                    </div> <div class="form-group"
+        ng-class="{'has-warning': register_Form.email.$valid==false && register_Form.email.$dirty, 'has-success': register_Form.email.$valid}"> <label
+        for="field_email"
+        class="item item-input"> <span class="input-label"> Email * </span>
+                            <input type="email" class="form-control" id="field_email" placeholder="Email" name="email" ng-pattern="regex.email" ng-maxlength="250" ng-model="registerData.email" required>
+                        </label> </div>
+                    <div class="form-group" ng-class="{'has-warning': register_Form.password.$valid==false && register_Form.password.$dirty, 'has-success': register_Form.password.$valid}">
+                        <label for="inputPassword1" class="item item-input">
+                            <span class="input-label">Password</span> <input type="password"
+        class="form-control"
+        id="inputPassword1"
+        placeholder="Password"
+        name="password"
+        ng-pattern="regex.password"
+        ng-model="registerData.password"
+        required> </label>
+
+                    </div> <div class="form-group"> <label class="item item-input"
+        for="field_island"> <span class="input-label"> Island: * </span>
+                            <select name="island" class="form-control" id="field_island" ng-model="registerData.island" ng-class="{'has-warning': register_Form.island.$valid==false && register_Form.island.$dirty, 'has-success': register_Form.island.$valid}" required>
+                                <option value="abacos">The Abacos</option> <option value="grand-bahama"> Grand Bahama Island </option>
+                                <option value="acklins-and-crooked">Acklins &amp; Crooked Island</option> <option value="inagua"> Inagua </option>
+                                <option value="andros">Andros</option> <option value="long"> Long Island </option>
+                                <option value="berry">The Berry Islands</option> <option value="mayaguana"> Mayaguana </option>
+                                <option value="bimini">Bimini</option> <option value="nassau"> Nassau & amp;
+        Paradise Island </option>
+                                <option value="cat">Cat Island</option> <option value="ragged"> Ragged Island </option>
+                                <option value="eleuthera">Eleuthera &amp; Harbour Island</option> <option value="rum-cay"> Rum Cay </option>
+                                <option value="exumas">The Exumas</option> <option value="san-salvador"> San Salvador </option>
+                            </select> </label>
+                    </div> <div class="form-group"> <button class="button button-fullbutton-balanced"
+        ng-click="siteRegistration();"
+        ng-disabled="register_Form.$valid==false"> Create Account </button>
+                        <hr class="thin" /> <p class="padding text-center"> By creating an account you agree to Marketplace 's&nbsp;
+                            <a href="#" class="balanced" nourl ng-click="openModal('
+        service ');">Terms of Use</a>&nbsp;and
+                            <a href="#" class="balanced" nourl ng-click="openModal('
+        privacy ');">Privacy Policy</a>.
+                        </p>
+                    </div>
+                </form>
+            </ion-content>
+        </div>
+    </script>
+    <script type="text/ng-template" id="partials/policies/privacy.tpl.html">
+
+        <div class="modal policy"
+        id="PolicyAside"> <ion-header-bar bindonce class="bar-balanced"> <h1 class="title"> <span class='ion ion-document-text'> </span>&nbsp;Marketplace Privacy Policy</h1> <div class="buttons"> <button class="button button-icon icon ion-close-round"
+        ng-click="closeModal();">Close</button>
+                </div> </ion-header-bar>
+
+            <ion-content>
+                <div class="padding">
+                    <h3>Marketplace Privacy Policy</h3> <p> This Privacy Policy was last modified on March 21, 2014. </p>
+                    <p>Marketplace ("us", "we", or "our") operates salepoint.gorigins.com (the "Site"). This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of the Site.</p> <p> We use your Personal Information only
+        for providing and improving the Site.By using the Site, you agree to the collection and use of information in accordance with this policy.Unless otherwise defined in this Privacy Policy, terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, accessible at salepoint.gorigins.com. </p>
+
+                    <p>
+                        <strong>Information Collection And Use</strong> <br> While using our Site, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you.Personally identifiable information may include, but is not limited to, your name, email address, postal address and phone number("Personal Information"). </p>
+
+                    <p>
+                        <strong>Log Data</strong> <br> Like many site operators, we collect information that your browser sends whenever you visit our Site("Log Data").This Log Data may include information such as your computer 's Internet Protocol ("IP") address, browser type, browser version, the pages of our Site that you visit, the time and date of your visit, the time spent on those pages and other statistics.</p>
+
+                    <p>
+                        <strong>Cookies</strong>
+                        <br>Cookies are files with small amount of data, which may include an anonymous unique identifier. Cookies are sent to your browser from a web site and stored on your computer'
+        s hard drive. </p>
+                    <p>Like many sites, we use "cookies" to collect information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Site.</p>
+
+         <p> <strong> Security </strong>
+                        <br>The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage, is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.</p>
+
+         <p> <strong> Links To Other Sites </strong>
+                        <br>Our Site may contain links to other sites that are not operated by us. If you click on a third party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit.</p> <p> Marketplace has no control over, and assumes no responsibility
+        for, the content, privacy policies, or practices of any third party sites or services. </p>
+
+                    <p>
+                        <strong>Changes To This Privacy Policy</strong> <br> Marketplace may update this Privacy Policy from time to time.We will notify you of any changes by posting the new Privacy Policy on the Site.You are advised to review this Privacy Policy periodically
+        for any changes. </p>
+
+                    <p>
+                        <strong>Contact Us</strong> <br> If you have any questions about this Privacy Policy, please contact us. </p>
+                </div> </ion-content>
+        </div>
+    </script>
+    <script type="text/ng-template" id="partials/policies/TOS.tpl.html">
+
+        <div class="modal policy"
+        id="PolicyAside"> <ion-header-bar bindonce class="bar-balanced"> <h1 class="title"> <span class='ion ion-document-text'> </span>&nbsp;Terms of Service ('Agreement')
+    </h1> <div class="buttons"> <button class="button button-icon icon ion-close-round"
+        ng-click="closeModal();">Close</button>
+    </div> </ion-header-bar>
+
+<ion-content>
+    <div class="padding">
+        <h3>Marketplace Terms of Service ("Agreement")</h3>
+
+         <p> This Agreement was last modified on March 21, 2014. </p>
+
+        <p>Please read these Terms of Service ("Agreement", "Terms of Service") carefully before using salepoint.gorigins.com ("the Site") operated by Marketplace ("us", "we", or "our"). This Agreement sets forth the legally binding terms and conditions for your use of the Site at salepoint.gorigins.com.</p>
+
+         <p> By accessing or using the Site in any manner, including, but not limited to, visiting or browsing the Site or contributing content or other materials to the Site, you agree to be bound by these Terms of Service.Capitalized terms are defined in this Agreement. </p>
+
+        <p>
+            <strong>Intellectual Property</strong> <br> The Site and its original content, features and functionality are owned by Marketplace and are protected by international copyright, trademark, patent, trade secret and other intellectual property or proprietary rights laws. </p>
+
+        <p>
+            <strong>Termination</strong> <br> We may terminate your access to the Site, without cause or notice, which may result in the forfeiture and destruction of all information associated with you.All provisions of this Agreement that by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability. </p>
+
+        <p>
+            <strong>Links To Other Sites</strong> <br> Our Site may contain links to third-party sites that are not owned or controlled by Marketplace. </p>
+
+        <p>Marketplace has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party sites or services. We strongly advise you to read the terms and conditions and privacy policy of any third-party site that you visit.</p>
+
+         <p> <strong> Governing Law </strong>
+            <br>This Agreement (and any further rules, polices, or guidelines incorporated by reference) shall be governed and construed in accordance with the laws of The Bahamas, without giving effect to any principles of conflicts of law.</p>
+
+         <p> <strong> Changes To This Agreement </strong>
+            <br>We reserve the right, at our sole discretion, to modify or replace these Terms of Service by posting the updated terms on the Site. Your continued use of the Site after any such changes constitutes your acceptance of the new Terms of Service.</p>
+
+         <p> Please review this Agreement periodically
+        for changes.If you do not agree to any of this Agreement or any changes to this Agreement, do not use, access or
+         continue
+         to access the Site or discontinue any use of the Site immediately. </p>
+
+        <p>
+            <strong>Contact Us</strong> <br> If you have any questions about this Agreement, please contact us. </p>
+    </div> </ion-content>
+</div>
+    </script>
+    <script type="text/ng-template" id="partials/shop_detail.html">
+<ion-view title="{{ADappState.currentName}}">
+    <ion-content class="has-header" ng-controller="ShopCtrl" bindonce="">
+        <div class="row padding">
+            <div class="col col-33">
+                <img bo-src="appData.UploadsURL + activeShop.shop_image.path" class="thumbnail padding">
+            </div>
+            <div class="col col-66 text-center">
+                <h3 data-bo-text="activeShop.title"></h3>
+            </div>
+        </div>
+
+        <div class="button-bar calm-bg">
+            <span class="button button-icon" ng-bind-html="'<span class=\'ion ion-eye\'></span> ' + (activeShop.views_num|number:0) + ' Views'"></span>
+
+            <!--<a class="button button-icon icon ion-star" ng-click="thumbs(activeDeal, 'up');"></a>-->
+
+            <a class="button button-icon" ng-click="favShop(activeShop);">
+                <span data-ng-if="activeShop.faved==false">
+                    <i class="ion ion-ios7-heart-outline text-success"></i>
+                </span>
+                <span data-ng-if="activeShop.faved==true">
+                    <i class="ion ion-ios7-heart text-success"></i>
+                </span>
+            </a>
+        </div>
+
+        <ion-list animation="slide-left" can-swipe="true" option-buttons="dealOptions" item-type="item">
+            <ion-item item="deal" class="item-thumbnail-left" ng-repeat="deal in deals" bindonce="deals" ng-click="selectDeal(deal);" ng-href="#" nourl>
+                <img bo-src="deal.coupon_image">
+                <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
+                <p bo-text="(deal.discount_amount|number:0)+'% Off'"></p>
+                <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+            </ion-item>
+        </ion-list>
+
+    </ion-content>
+</ion-view>
+
+
+    </script>
+
+</body>
+
+</html>

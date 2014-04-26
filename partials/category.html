@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<ion-view title="{{ADappState.currentName}}">
+    <ion-content class="has-header" ng-controller="CategoryCtrl" bindonce="">
+        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)" pulling-text="Pull down to refresh<br><small>{{updated}}</small>" refreshing-text="Refreshing" refreshing-icon="ion-refreshing" on-refresh="onReload()"></ion-refresher>
+
+        <section bo-if="ADappState.Type=='isPhone'">
+            <ion-list animation="slide-left" can-swipe="true" option-buttons="dealOptions" item-type="item">
+                <ion-item item="deal" class="item-thumbnail-left" ng-repeat="deal in deals" bindonce="deals" ng-click="selectDeal(deal);" ng-href="#" nourl>
+                    <img bo-src="deal.coupon_image">
+                    <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
+                    <p bo-text="(deal.discount_amount|number:0)+'% Off'"></p>
+                    <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+                </ion-item>
+            </ion-list>
+        </section>
+
+        <section bo-if="ADappState.Type=='isTablet'">
+            <ion-list animation="slide-left" can-swipe="true" option-buttons="dealOptions" item-type="item">
+                <ion-item item="deal" class="item-thumbnail-left" ng-repeat="deal in deals" bindonce="deals" ng-click="selectDeal(deal);" ng-href="#" nourl>
+                    <img bo-src="deal.coupon_image">
+                    <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
+                    <p bo-text="(deal.discount_amount|number:0)+'% Off'"></p>
+                    <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+                </ion-item>
+            </ion-list>
+        </section>
+        <ion-infinite-scroll on-infinite="loadMore()" distance="1%"></ion-infinite-scroll>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<div class="modal default" id="LoginAside">
+    <ion-header-bar bindonce="" class="bar-balanced">
+        <h1 class="title" bo-html="'<span class=\' ion ion-log-in \'></span>&nbsp;Sign In'"></h1>
+        <div class="buttons">
+            <button class="button button-icon icon ion-close-round" ng-click="closeModal();"></button>
+        </div>
+    </ion-header-bar>
+
+    <ion-content>
+        <form class="padding" role="form">
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">Username</span>
+                    <input type="text" name="username" ng-model="loginData.username" autofocus required>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Password</span>
+                    <input type="password" name="password" ng-model="loginData.password" required ng-keydown="startloginKeydown($event);">
+                </label>
+            </div>
+
+            <button type="button" class="button button-full button-positive" ng-click="startLogin();">Sign in</button>
+
+        </form>
+    </ion-content>
+</div>

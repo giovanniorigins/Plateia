@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<ion-list animation="slide-left" can-swipe="true" option-buttons="dealOptions" item-type="item">
+    <form name="subSearch" class="item item-input-inset searh-bar am-fade-and-slide-bottom" search-bar>
+        <label class="item-input-wrapper">
+            <i class="icon ion-ios7-search placeholder-icon"></i>
+            <input type="search" placeholder="Search" ng-model="searchData.search" ng-keyup="search($event)">
+            <i class="icon ion-close-circled placeholder-icon" ng-show="searchData.search.length > 0" ng-click="searchData.search = ''" style="font-size:30px;"></i>
+        </label>
+        <button type="submit" class="button button-clear hide">
+            Search
+        </button>
+    </form>
+
+    <ion-item item="deal" class="item-thumbnail-left" ng-repeat="deal in deals | dealFilter:dealFilters" bindonce="deals" ng-click="selectDeal(deal);" ng-href="#" nourl>
+        <img bo-src="deal.coupon_image">
+        <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
+        <p bo-text="(deal.discount_amount|number:0)+'% Off'"></p>
+        <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+    </ion-item>
+</ion-list>

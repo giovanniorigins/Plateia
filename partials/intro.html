@@ -1,0 +1,137 @@
+<ion-view hide-nav-bar="true" hide-back-button="true" title="Welcome" class="welcome" ng-controller="WelcomeCtrl">
+    <!--<ion-nav-buttons side="right">
+        <button class="button button-clear no-animation" ng-click="close();">
+            Skip Intro
+            <span class="ion ion-chevron-right"></span>
+        </button>
+    </ion-nav-buttons>-->
+
+    <ion-slide-box disable-scroll="false">
+        <ion-slide>
+            <ion-scroll class="padding">
+                <h2 class="text-center">Welcome to
+                    <br>Marketplace!</h2>
+                <div id="logo">
+                    <img src="http://code.ionicframework.com/assets/img/app_icon.png">
+                </div>
+                <h3>Marketplace provides an easy and convenient way to find great deals and coupons on products in local stores.</h3>
+                <h3>Swipe left to learn how.</h3>
+            </ion-scroll>
+        </ion-slide>
+        <ion-slide>
+            <ion-scroll class="padding">
+                <h1 class="text-center">View all the latest deals
+                    <br>and seach.</h1>
+                <div class="row">
+                    <!--<div class="col">
+                        <div id="list">
+                            <a class="item item-icon-left active" href="#/" nourl>
+                                <span class="icon ion-home"></span>
+                                Home
+                            </a>
+
+                            <a class="item item-icon-left" href="#/shops" nourl style="opacity:.6">
+                                <span class="icon ion-bag"></span>
+                                Shops
+                            </a>
+
+                            <a class="item item-icon-left" href="#/categories" nourl style="opacity:.6">
+                                <span class="icon ion-filing"></span>
+                                Categories
+                            </a>
+                        </div>
+                    </div>-->
+                    <div class="col">
+                        <img class="text-center" src="images/temp/home.png" style="width:100%;height:auto;">
+                    </div>
+                </div>
+
+            </ion-scroll>
+        </ion-slide>
+        <ion-slide>
+            <ion-scroll class="padding">
+                <h2 class="text-center">Browse individual shops, add them to favorites and get directions.</h2>
+                <div class="row">
+                    <!--<div class="col">
+                        <div id="list">
+                            <a class="item item-icon-left" href="#/" nourl style="opacity:.6">
+                                <span class="icon ion-home"></span>
+                                Home
+                            </a>
+
+                            <a class="item item-icon-left active" href="#/shops" nourl>
+                                <span class="icon ion-bag"></span>
+                                Shops
+                            </a>
+
+                            <a class="item item-icon-left" href="#/categories" nourl style="opacity:.6">
+                                <span class="icon ion-filing"></span>
+                                Categories
+                            </a>
+                        </div>
+                    </div>-->
+                    <div class="col">
+                        <img class="text-center" src="images/temp/home.png" style="width:100%;height:auto;">
+                    </div>
+                </div>
+
+            </ion-scroll>
+        </ion-slide>
+        <ion-slide>
+            <ion-scroll class="padding">
+                <h2>Browse by category.</h2>
+                <div class="row">
+                    <!--<div class="col">
+                        <div id="list">
+                            <a class="item item-icon-left" href="#/" nourl style="opacity:.6">
+                                <span class="icon ion-home"></span>
+                                Home
+                            </a>
+
+                            <a class="item item-icon-left" href="#/shops" nourl style="opacity:.6">
+                                <span class="icon ion-bag"></span>
+                                Shops
+                            </a>
+
+                            <a class="item item-icon-left active" href="#/categories" nourl>
+                                <span class="icon ion-filing"></span>
+                                Categories
+                            </a>
+                        </div>
+                    </div>-->
+                    <div class="col">
+                        <img class="text-center" src="images/temp/home.png" style="width:100%;height:auto;">
+                    </div>
+                </div>
+
+            </ion-scroll>
+        </ion-slide>
+        <ion-slide>
+            <ion-scroll class="padding">
+                <h1 class="text-center">Lets Get Started!</h1>
+                <p>If you already have an account</p>
+                <button type="button" class="button button-block button-positive" data-ng-click="login();">
+                    <span class="ion ion-log-in"></span>&nbsp;Sign in
+                </button>
+
+                <p>If you don't have an account yet</p>
+                <button type="button" class="button button-block button-balanced" data-ng-click="register();">
+                    <span class="ion ion-compose"></span>&nbsp;Sign up
+                </button>
+
+                <p>Or just be anti-social like that...</p>
+                <button type="button" class="button button-block button-assertive" data-ng-click="close();">
+                    <span class="ion ion-chevron-right"></span>&nbsp;Continue
+                </button>
+            </ion-scroll>
+        </ion-slide>
+    </ion-slide-box>
+
+    <div class="bar bar-footer">
+        <button class="button button-clear no-animation pull-right" ng-click="close();">
+            Skip Intro
+            <span class="ion ion-chevron-right"></span>
+        </button>
+    </div>
+
+</ion-view>

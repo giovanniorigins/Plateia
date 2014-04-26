@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<div class="row">
+    <form name="subSearch" class="item item-input-inset search-bar am-fade-and-slide-bottom col" search-bar>
+        <label class="item-input-wrapper">
+            <i class="icon ion-ios7-search placeholder-icon"></i>
+            <input type="search" placeholder="Search" ng-model="searchData.search" ng-keyup="search($event)">
+            <i class="icon ion-close-circled placeholder-icon" ng-show="searchData.search.length > 0" ng-click="searchData.search = ''" style="font-size:30px;"></i>
+        </label>
+        <button type="submit" class="button button-clear hide">
+            Search
+        </button>
+    </form>
+</div>
+<ion-list animation="slide-left" class="row row-wrap block-list responsive-sm">
+    <ion-item item="deal" class="col padding-horizontal padding-top deal-item" ng-class="{'portrait':'col-50', 'landscape':'col-33'}[ADappState.Orientation]" ng-repeat="deal in deals | dealFilter:dealFilters" bindonce="deals" ng-click="selectDeal(deal);" ng-href="#" nourl="">
+
+        <div class="list card">
+
+            <div class="item item-image">
+                <img bo-src="deal.coupon_image">
+                <div class="row" style="position:absolute;bottom:0;opacity: .9;">
+                    <div class="col positive-bg light" style="">
+                        <small class="strike dark" bo-text="'$'+(deal.list_price|number:0)"></small>
+                        <strong class="" bo-text="'$'+(deal.new_price|number:2:2)"></strong>
+
+                        <strong class="hide">
+                            <span class="" bo-text="(deal.discount_amount|number:0:2)+'% Off'"></span>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item item-body text-center deal-item-heading">
+                <h2 class="" bo-html="(deal.title|cut:true:39)+'<br/><small>from '+deal.shop_title+'</small>'"></h2>
+
+                <div class="row deal-item-stats hide">
+                    <div class="col-25 positive-bg light">
+                        <strong>
+                            <span class="" bo-text="(deal.discount_amount|number:0)+'% Off'"></span>
+                        </strong>
+                    </div>
+                    <div class="col-75">
+                        <small class="" bo-text="'Ends '+(toExpire(deal.expire_date))"></small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </ion-item>
+
+</ion-list>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<ion-view title="{{ADappState.currentName}}">
+    <ion-content class="has-header" ng-controller="ShopsCtrl" bindonce>
+        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)" pulling-text="Pull down to refresh<br><small>{{updated}}</small>" refreshing-text="Refreshing" refreshing-icon="ion-refreshing" on-refresh="onReload()"></ion-refresher>
+
+        <section bo-if="ADappState.Type=='isPhone'">
+            <ion-list animation="slide-left" can-swipe="true" item-type="thumbnails" option-buttons="shopOptions" class>
+                <ion-item bo-id="'shop-' + shop.id" data-shop-item item="shop" class="item-thumbnail-left shop-item" ng-repeat="shop in shops track by shop.id" bindonce="shops" ng-click="selectShop(shop);" ng-href="#" nourl>
+                    <img bo-src="appData.UploadsURL + shop.shop_image.path" />
+                    <h2 bo-html="shop.title"></h2>
+                    <p ng-pluralize count="shop.num_coupons" when="{'0': 'No Deals', 'one': '1 Deal', 'other': '{} Deals'}"></p>
+                    <!--<a class href="#" nourl fast-click="favShop(shop);">
+    <i ng-if="shop.faved==false" class="ion ion-ios7-heart-outline text-success"></i>
+    <i ng-if="shop.faved==true" class="ion ion-ios7-heart text-success"></i>
+    Like
+</a>-->
+                </ion-item>
+            </ion-list>
+        </section>
+
+        <section bindonce bo-if="ADappState.Type=='isTablet'">
+            <ion-list animation="slide-left" can-swipe="false" class="row row-wrap block-list">
+                <ion-item bo-id="'shop-' + shop.id" data-shop-item item="shop" class="shop-item col" ng-class="{'portrait':'col-33', 'landscape':'col-25'}[ADappState.Orientation]" ng-repeat="shop in shops track by shop.id" bindonce="shops" nourl>
+
+                    <div class="list card">
+
+                        <div class="item item-image" bindonce ng-click="selectShop(shop);">
+                            <img bo-src="appData.UploadsURL + shop.shop_image.path">
+                        </div>
+
+                        <div class="item tabs tabs-secondary tabs-icon-only">
+                            <a class="tab-item" href="#" ng-click="favShop(shop)" nourl>
+                                <i ng-if="shop.faved==false" class="icon ion-ios7-heart-outline"></i>
+                                <i ng-if="shop.faved==true" class="icon ion-ios7-heart"></i>
+                                Like
+                            </a>
+
+                            <a class="tab-item" href="#" ng-click="selectShop(shop, true);" nourl>
+                                <i class="icon ion-location"></i>
+                                Locations
+                            </a>
+
+                            <!--<a class="tab-item" href="#" fast-click="shopShare(shop);">
+    <i class="icon ion-share"></i>
+    Share
+</a>-->
+                        </div>
+
+                    </div>
+
+                </ion-item>
+
+            </ion-list>
+        </section>
+
+    </ion-content>
+</ion-view>

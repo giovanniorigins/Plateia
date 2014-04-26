@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<ion-view title="{{ADappState.currentName}}">
+    <ion-content on-scroll="toggleSearchbar($event)" class="has-header" ng-controller="HomeCtrl" bindonce="">
+        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)" pulling-text="Pull down to refresh<br><small>{{updated}}</small>" refreshing-text="Refreshing" refreshing-icon="ion-refreshing" on-refresh="onReload()"></ion-refresher>
+
+        <section bo-if="ADappState.Type=='isPhone'">
+            <ng-include src="'partials/deal-phone.tpl.html'"></ng-include>
+        </section>
+
+        <section bo-if="ADappState.Type=='isTablet'">
+            <ng-include src="'partials/deal-tablet.tpl.html'"></ng-include>
+        </section>
+        <ion-infinite-scroll on-infinite="loadMore()" distance="1%"></ion-infinite-scroll>
+    </ion-content>
+</ion-view>

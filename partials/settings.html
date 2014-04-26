@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<ion-view title="{{ADappState.currentName}}">
+
+    <ion-content class="has-header" ng-controller="SettingsCtrl" bindonce="">
+        <ul class="list">
+
+            <a href="#/intro" class="item">
+                Show Tutorial
+            </a>
+
+            <ion-toggle ng-model="toggles.enablePush" ng-change="toggle('push')">
+                Push Notifications
+            </ion-toggle>
+
+            <ion-toggle ng-model="toggles.enableGeo" ng-change="toggle('geo')">
+                Geolocation Services
+            </ion-toggle>
+
+            <a class="item" href="#" nourl ng-click="openModal('service');">
+                Terms of Service
+            </a>
+            <a class="item" href="#" nourl ng-click="openModal('privacy');">
+                Privacy Policy
+            </a>
+
+            <a class="item hide" href="#" nourl ng-click="">
+                Invite Friends
+            </a>
+
+            <a class="item" href="#" nourl ng-click="">
+                Rate/Review this app
+            </a>
+
+            <a class="item" href="#" nourl ng-click="">
+                FAQ
+            </a>
+
+        </ul>
+    </ion-content>
+</ion-view>
