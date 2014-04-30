@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<ion-list animation="slide-left" can-swipe="true" option-buttons="dealOptions" item-type="item">
+<ion-list animation="slide-left" can-swipe="true">
     <form name="subSearch" class="item item-input-inset searh-bar am-fade-and-slide-bottom" search-bar>
         <label class="item-input-wrapper">
             <i class="icon ion-ios7-search placeholder-icon"></i>
@@ -11,10 +11,32 @@
         </button>
     </form>
 
-    <ion-item item="deal" class="item-thumbnail-left" ng-repeat="deal in deals | dealFilter:dealFilters" bindonce="deals" ng-click="selectDeal(deal);" ng-href="#" nourl>
+    <!--<ion-item class="item-thumbnail-left item-icon-right" ng-repeat="deal in deals | dealFilter:dealFilters" bindonce="deals" ng-click="selectDeal(deal);">
         <img bo-src="deal.coupon_image">
         <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
-        <p bo-text="(deal.discount_amount|number:0)+'% Off'"></p>
-        <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+        <small class="strike dark" bo-text="'$'+(deal.list_price|number:0)"></small>
+        <strong class="" bo-text="'$'+(deal.new_price|number:2:2)"></strong>
+        <strong class="hide">
+            <span class="" bo-text="(deal.discount_amount|number:0:2)+'% Off'"></span>
+        </strong>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button button-icon icon ion-share" ng-click='openShare(deal)'></ion-option-button>
+        <ion-option-button class="button button-icon icon ion-location" ng-click="selectDeal(deal, false, true)"></ion-option-button>
+    </ion-item>-->
+
+    <ion-item class="item-thumbnail-left item-icon-right" style="width:100%" collection-repeat="deal in deals | dealFilter:dealFilters" collection-item-width="'100%'" collection-item-height="100" bindonce="deals" ng-click="selectDeal(deal);">
+        <img bo-src="deal.coupon_image">
+        <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
+        <small class="strike dark" bo-text="'$'+(deal.list_price|number:0)"></small>
+        <strong class="" bo-text="'$'+(deal.new_price|number:2:2)"></strong>
+        <strong class="hide">
+            <span class="" bo-text="(deal.discount_amount|number:0:2)+'% Off'"></span>
+        </strong>
+
+        <ion-option-button class="button button-icon icon ion-share" ng-click='openShare(deal)'></ion-option-button>
+        <ion-option-button class="button button-icon icon ion-location" ng-click="selectDeal(deal, false, true)"></ion-option-button>
+
+        <i class="icon ion-chevron-right icon-accessory"></i>
     </ion-item>
 </ion-list>
