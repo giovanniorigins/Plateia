@@ -3,223 +3,247 @@ function strict() {
 }
 
 var Marketplace = angular.module('plateia', [
-    'ngRoute',
-    'ngAnimate',
+    //'ngRoute',
+    //'ngAnimate',
     'ngResource',
-    'ngSanitize',
-    'ngTouch',
+    //'ngSanitize',
+    'ngDreamFactory',
     'pasvaz.bindonce',
     'rn-lazy',
     'google-maps',
-    /*'angular-carousel',
-    'bensane.ng-swipe',*/
     'jmdobry.angular-cache',
-    //'mgcrea.ngStrap',
     'ionic',
     'ionic.contrib.frostedGlass',
+    'ui.router',
     'ui.router.stateHelper',
     'plateia.filters',
     'plateia.services',
     'plateia.directives',
     'plateia.controllers'
- ]);
+]);
 
 Marketplace.config(['$stateProvider', '$urlRouterProvider',
-    function ($stateProvider, $urlRouterProvider) {
-        $stateProvider
-            .state('intro', {
-                url: "/intro",
-                templateUrl: 'partials/intro.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 0
-            })
-            .state('index', {
-                //parent: 'nav',
-                url: '/',
-                templateUrl: 'partials/index.html',
-                controller: ['$scope', 'Deals',
-                function ($scope, Deals) {
+        function ($stateProvider, $urlRouterProvider) {
+            $stateProvider
+                .state('intro', {
+                    url: "/intro",
+                    templateUrl: 'partials/intro.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 0
+                })
+                .state('index', {
+                    //parent: 'nav',
+                    url: '/',
+                    templateUrl: 'partials/index.html',
+                    controller: ['$scope', function ($scope) {
+
+                    }],
+                    resolve: {
+                        //GetAppData: AppData.resolve,
+                    },
+                    depth: 1
+                })
+                .state('search', {
+                    //parent: 'nav',
+                    url: '/search',
+                    templateUrl: 'partials/search.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 2
+                })
+                .state('categories', {
+                    //parent: 'nav',
+                    url: '/categories',
+                    templateUrl: 'partials/categories.html',
+                    controller: function ($scope, AppData, Categories) {
+                        $scope.ADarrays.Categories = AppData.Arrays.Categories = Categories;
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve,
+                        Categories: function (myService) {
+                            return myService.getCategories();
+                        }
+                    },
+                    depth: 1
+                })
+                .state('category', {
+                    //parent: 'categories',
+                    url: '/categories/:catAlias',
+                    templateUrl: 'partials/category.html',
+                    controller: function ($scope, AppData, Deals) {
                         $scope.deals = Deals;
-            }],
-                resolve: {
-                    //GetAppData: AppData.resolve,
-                    Deals: ['myService',
-                    function (myService) {
-                            return myService.getDeals();
-                }]
-                },
-                depth: 1
-            })
-            .state('search', {
-                //parent: 'nav',
-                url: '/search',
-                templateUrl: 'partials/search.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 2
-            })
-            .state('shops', {
-                //parent: 'nav',
-                url: '/shops',
-                templateUrl: 'partials/shops.html',
-                controller: function ($scope, AppData, Shops) {
-                    $scope.shops = Shops;
-                },
-                resolve: {
-                    //GetAppData: AppData.resolve/*,
-                    Shops: function (myService) {
-                        return myService.getShops();
-                    }
-                },
-                depth: 1
-            })
-            .state('shop', {
-                //parent: 'shops',
-                url: '/shops/:shopAlias',
-                templateUrl: 'partials/shop_detail.html',
-                /*controller: function ($scope, Shop) {
-    $scope.deals = Shop.deals;
-},
-resolve: {
-    //GetAppData: AppData.resolve,
-    Shop: function ($rootScope, myService) {
-        return myService.getShopById($rootScope.activeShop.id)
-    }
-},*/
-                depth: 2
-            })
-            .state('shop_details', {
-                //parent: 'shop',
-                url: '/shops/:shopAlias/details',
-                templateUrl: 'partials/shop_details.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 3
-            })
-            .state('categories', {
-                //parent: 'nav',
-                url: '/categories',
-                templateUrl: 'partials/categories.html',
-                controller: function ($scope, AppData, Categories) {
-                    $scope.ADarrays.Categories = AppData.Arrays.Categories = Categories;
-                },
-                resolve: {
-                    //GetAppData: AppData.resolve,
-                    Categories: function (myService) {
-                        return myService.getCategories();
-                    }
-                },
-                depth: 1
-            })
-            .state('category', {
-                //parent: 'categories',
-                url: '/categories/:catAlias',
-                templateUrl: 'partials/category.html',
-                controller: function ($scope, AppData, Deals) {
-                    $scope.deals = Deals;
-                },
-                resolve: {
-                    //GetAppData: AppData.resolve,
-                    Deals: function ($rootScope, myService, AppData) {
-                        return myService.getDealsByCategoryId($rootScope.activeCategory.id);
-                    }
-                },
-                depth: 2
-            })
-            .state('notifications', {
-                //parent: 'nav',
-                url: '/notifications',
-                templateUrl: 'partials/activity.html', // 'partials/notifications.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 1
-            })
-            .state('activity', {
-                //parent: 'nav',
-                url: '/activity',
-                templateUrl: 'partials/activity.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 1
-            })
-            .state('invite', {
-                //parent: 'nav',
-                url: '/invite',
-                templateUrl: 'partials/invite.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 1
-            })
-            .state('settings', {
-                url: '/settings',
-                templateUrl: 'partials/settings.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 1
-            })
-            .state('help', {
-                //parent: 'nav',
-                url: '/help',
-                templateUrl: 'partials/help.html',
-                controller: function ($scope) {},
-                resolve: {
-                    //GetAppData: AppData.resolve
-                },
-                depth: 1
-            });
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve,
+                        Deals: function ($rootScope, myService, AppData) {
+                            return myService.getDealsByCategoryId($rootScope.activeCategory.id);
+                        }
+                    },
+                    depth: 2
+                })
+                .state('notifications', {
+                    //parent: 'nav',
+                    url: '/notifications',
+                    templateUrl: 'partials/activity.html', // 'partials/notifications.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 1
+                })
+                .state('activity', {
+                    //parent: 'nav',
+                    url: '/activity',
+                    templateUrl: 'partials/activity.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 1
+                })
+                .state('invite', {
+                    //parent: 'nav',
+                    url: '/invite',
+                    templateUrl: 'partials/invite.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 1
+                })
+                .state('settings', {
+                    url: '/settings',
+                    templateUrl: 'partials/settings.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 1
+                })
+                .state('shops', {
+                    //parent: 'nav',
+                    url: '/settings/shops',
+                    templateUrl: 'partials/shops.html',
+                    controller: function ($scope, Shops) {
+                        $scope.Shops = Shops;
+                    },
+                    resolve: {
+                        Shops: function (Shop) {
+                            return Shop.get();
+                        }
+                    },
+                    depth: 2
+                })
+                /*.state('shop', {
+                 //parent: 'shops',
+                 url: '/shops/:shopAlias',
+                 templateUrl: 'partials/shop_detail.html',
+                 controller: function ($scope, Shop) {
+                 $scope.deals = Shop.deals;
+                 },
+                 resolve: {
+                 //GetAppData: AppData.resolve,
+                 Shop: function ($rootScope, myService) {
+                 return myService.getShopById($rootScope.activeShop.id)
+                 }
+                 },
+                 depth: 2
+                 })
+                 .state('shop_details', {
+                 //parent: 'shop',
+                 url: '/shops/:shopAlias/details',
+                 templateUrl: 'partials/shop_details.html',
+                 controller: function ($scope) {
+                 },
+                 resolve: {
+                 //GetAppData: AppData.resolve
+                 },
+                 depth: 3
+                 })*/
+                .state('help', {
+                    //parent: 'nav',
+                    url: '/help',
+                    templateUrl: 'partials/help.html',
+                    controller: function ($scope) {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve
+                    },
+                    depth: 1
+                });
 
-        $urlRouterProvider.otherwise("/");
+            $urlRouterProvider.otherwise("/");
 
-            }]);
+        }])
+    .constant('DSP_URL', 'https://dsp-gorigins.cloud.dreamfactory.com')
+    .constant('DSP_API_KEY', 'Marketplace')
+    .config(['$httpProvider', 'DSP_API_KEY',
+        function ($httpProvider, DSP_API_KEY) {
+            $httpProvider.defaults.headers.common['X-DreamFactory-Application-Name'] = DSP_API_KEY;
+        }]);
 
 angular.module('plateia.services', [])
     .value('version', '2.0')
     .factory('NavItems', function () {
-        return [{
-            "name": "Home",
-            "url": "#/",
-            "class": "ion-home"
-        }, {
-            "name": "Shops",
-            "url": "#/shops",
-            "class": "ion-bag"
-        }, {
-            "name": "Categories",
-            "url": "#/categories",
-            "class": "ion-filing"
-        }, {
-            "name": "Notifications",
-            "url": "#/activity",
-            "class": "ion-ios7-bell"
-        }, {
-            "name": "Settings",
-            "url": "#/settings",
-            "class": "ion-gear-a"
-        }, {
-            "name": "Help",
-            "url": "#/help",
-            "class": "ion-help"
-        }];
+        return [
+            {
+                "name": "Home",
+                "url": "#/",
+                "class": "ion-home"
+            },
+            {
+                "name": "Shops",
+                "url": "#/shops",
+                "class": "ion-bag"
+            },
+            {
+                "name": "Categories",
+                "url": "#/categories",
+                "class": "ion-filing"
+            },
+            {
+                "name": "Notifications",
+                "url": "#/activity",
+                "class": "ion-ios7-bell"
+            },
+            {
+                "name": "Settings",
+                "url": "#/settings",
+                "class": "ion-gear-a"
+            },
+            {
+                "name": "Help",
+                "url": "#/help",
+                "class": "ion-help"
+            }
+        ];
     })
+    .factory('ServiceData', ['DSP_URL', 'DSP_API_KEY', function (DSP_URL, DSP_API_KEY) {
+        "use strict";
+        return {
+            DB: DSP_URL + '/rest/db',
+            Files: DSP_URL + '/rest/files/applications/' + DSP_API_KEY,
+            CouponImages: DSP_URL + '/rest/files/applications/' + DSP_API_KEY + '/images/coupons/?include_files=true',
+            Requests: DSP_URL + '/rest/'
+        };
+        // Usefull Things to remember
+        // https://dsp-gorigins.cloud.dreamfactory.com/rest/db/coupons?related=shop_by_shop_id%2Ccategories_by_category_id
+    }])
     .factory('AppData', function () {
         return {
             AppState: {
-                currentName: 'Marketplace',
+                currentName: 'Agora',
                 previousName: '',
                 currentApp: 'home',
                 previousApp: '',
@@ -229,9 +253,7 @@ angular.module('plateia.services', [])
                 Connection: intel.xdk.device.connection,
                 AllowGeo: intel.xdk.cache.getCookie('Allow_Geo') == 'true' || false,
                 AllowPush: intel.xdk.cache.getCookie('Allow_Push') == 'true' || false,
-                //TODO use Type and Orientation
-                deviceType: intel.xdk.isphone ? 'isPhone' : 'isTablet',
-
+                deviceType: intel.xdk.isphone ? 'isPhone' : 'isTablet'
             },
             BaseURL: 'http://salepoint.gorigins.com/',
             UploadsURL: 'http://salepoint.gorigins.com/uploads/',
@@ -240,7 +262,7 @@ angular.module('plateia.services', [])
                 Deals: 'http://salepoint.gorigins.com/api/deals/',
                 Shops: 'http://salepoint.gorigins.com/api/shops/',
                 Categories: 'http://salepoint.gorigins.com/api/categories/',
-                Users: 'http://salepoint.gorigins.com/api/users/',
+                Users: 'http://salepoint.gorigins.com/api/users/'
             },
             User: null,
             UserCreds: {
@@ -267,9 +289,103 @@ angular.module('plateia.services', [])
 
         };
     })
+    .factory('Request', ['$resource', 'ServiceData', function ($resource, ServiceData) {
+        "use strict";
+        return $resource(ServiceData.DB + '/request/');
+    }])
+    .factory('Issue', ['$resource', 'ServiceData', function ($resource, ServiceData) {
+        "use strict";
+        return $resource(ServiceData.DB + '/issues/:id/?fields=*&ids=:ids&order=shop_id%20ASC&related=shop_by_shop_id%2Cdeals_by_issue_id&id_field=shop_id&continue=true', {},
+            {
+                update: {
+                    method: 'PUT'
+                },
+                query: {
+                    method: 'GET', isArray: false
+                },
+                refresh: {
+                    method: 'GET', cache: false
+                }
+            }
+        );
+    }])
+    .factory('Category', ['$resource', 'ServiceData',
+        function ($resource, ServiceData) {
+            "use strict";
+            return $resource(ServiceData.DB + '/categories/:id/?fields=*', {}, {
+                update: {
+                    method: 'PUT'
+                },
+                query: {
+                    method: 'GET', isArray: false
+                }
+            });
+        }])
+    .factory('Shop', ['$resource', 'ServiceData', function ($resource, ServiceData) {
+        "use strict";
+        return $resource(ServiceData.DB + '/shop/:id/?fields=*&related=deals_by_shop_id%2Cissues_by_shop_id', {},
+            {
+                update: {
+                    method: 'PUT' },
+                query: {
+                    method: 'GET', isArray: false
+                },
+                refresh: {
+                    method: 'GET', cache: false
+                }
+            });
+    }])
+    .factory('Deal', ['$resource', 'ServiceData', function ($resource, ServiceData) {
+        "use strict";
+        return $resource(ServiceData.DB + '/deal/:id/?fields=*&ids=:ids&order=shop_id%20ASC&related=shop_by_shop_id%2Ccategories_by_category_id%2Cissues_by_issue_id&id_field=shop_id', {},
+            {
+                update: {
+                    method: 'PUT', url: ServiceData.DB + '/deal/:id/?fields=*' },
+                query: {
+                    method: 'GET', isArray: false
+                },
+                refresh: {
+                    method: 'GET', cache: false
+                }
+            });
+    }])
+    .factory('Coupon', ['$resource', 'ServiceData',
+        function ($resource, ServiceData) {
+            "use strict";
+            return $resource(ServiceData.DB + '/coupons/:id/?fields=*&related=shop_by_shop_id%2Ccategories_by_category_id', {}, {
+                update: {
+                    method: 'PUT',
+                    url: ServiceData.DB + '/coupons/:id/?fields=*'
+                },
+                query: {
+                    method: 'GET',
+                    isArray: false
+                }
+            });
+        }])
+    .factory('CouponImages', ['$resource', 'ServiceData',
+        function ($resource, ServiceData) {
+            "use strict";
+            return $resource(ServiceData.CouponImages, {}, {
+                create: {
+                    method: 'POST',
+                    url: ServiceData.Files + '/images/coupons/?check_exist=true',
+                    params: {
+                        url: '@url'
+                    }
+                },
+                update: {
+                    method: 'PUT'
+                },
+                query: {
+                    method: 'GET',
+                    isArray: false
+                }
+            });
+        }])
     .factory('cookieHandler', function () {
         return {
-            save: function (a, b) {
+            saveShops: function (a, b) {
                 if (angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))) {
                     var favedShops = [];
                     favedShops = JSON.parse(intel.xdk.cache.getCookie('Faved_shops'));
@@ -299,7 +415,7 @@ angular.module('plateia.services', [])
             $http.defaults.cache = $angularCacheFactory.get('apiCache');
 
             /*** Get Resource lists ***/
-            // Get All Deals
+                // Get All Deals
             obj.getDeals = function (args, cache) {
                 LoadingService.loading(false);
                 var deferred = $q.defer();
@@ -385,7 +501,7 @@ angular.module('plateia.services', [])
             };
 
             /*** Get Resource by ID ***/
-            // Get Deal by ID
+                // Get Deal by ID
             obj.getDealById = function (id, args, cache) {
                 LoadingService.loading(false);
                 var deferred = $q.defer();
@@ -459,7 +575,7 @@ angular.module('plateia.services', [])
             };
 
             /*** Get relation by resource ID ***/
-            // Get Deals by Category ID
+                // Get Deals by Category ID
             obj.getDealsByCategoryId = function (id, args, cache) {
                 LoadingService.loading(false);
                 var deferred = $q.defer();
@@ -487,7 +603,7 @@ angular.module('plateia.services', [])
             };
 
             /*** Searches ***/
-            // Get Deals by terms
+                // Get Deals by terms
             obj.getDealsBySearch = function (args, cache) {
                 LoadingService.loading(false);
                 var deferred = $q.defer();
@@ -505,7 +621,7 @@ angular.module('plateia.services', [])
             };
 
             /*** User Functions ***/
-            // User Register
+                // User Register
             obj.userRegistration = function (args, cache) {
                 LoadingService.loading(false);
                 var deferred = $q.defer();
@@ -516,23 +632,23 @@ angular.module('plateia.services', [])
                     .success(function (data, status, headers, config) {
 
                         switch (data.status) {
-                        case 'success':
-                            AppData.UserCreds.username = args.username;
-                            AppData.UserCreds.password = args.password;
+                            case 'success':
+                                AppData.UserCreds.username = args.username;
+                                AppData.UserCreds.password = args.password;
 
-                            deferred.resolve('Account Creation Successful');
-                            intel.xdk.cache.setCookie('User_Login', JSON.stringify({
-                                'username': args.username,
-                                'password': args.password
-                            }), '-1');
-                            obj.userLogin(AppData.UserCreds);
-                            break;
-                        case 'error':
-                            deferred.reject(data.messages);
-                            break;
-                        case 'failed':
-                            deferred.reject('Account Creation Failed!');
-                            break;
+                                deferred.resolve('Account Creation Successful');
+                                intel.xdk.cache.setCookie('User_Login', JSON.stringify({
+                                    'username': args.username,
+                                    'password': args.password
+                                }), '-1');
+                                obj.userLogin(AppData.UserCreds);
+                                break;
+                            case 'error':
+                                deferred.reject(data.messages);
+                                break;
+                            case 'failed':
+                                deferred.reject('Account Creation Failed!');
+                                break;
                         }
                     })
                     .error(function (data, status, headers, config) {
@@ -801,7 +917,7 @@ angular.module('plateia.services', [])
             };
 
             return obj;
-                }])
+        }])
     .factory('LoadingService', ['$rootScope', '$timeout',
         function ($rootScope, $timeout) {
             return {
@@ -809,7 +925,7 @@ angular.module('plateia.services', [])
                     background = angular.isDefined(background) ? background : true;
                     intel.xdk.notification.showBusyIndicator();
                     /*if (!background)
-                        angular.element('#loading').fadeIn(100);*/
+                     angular.element('#loading').fadeIn(100);*/
                 },
                 loaded: function () {
                     $timeout(function () {
@@ -818,7 +934,7 @@ angular.module('plateia.services', [])
                     }, 800);
                 }
             };
-    }])
+        }])
     .factory('SearchEngine', ['$rootScope', 'myService', 'AppData',
         function ($rootScope, myService, AppData) {
             $rootScope.searchData = AppData.SearchData;
@@ -837,7 +953,7 @@ angular.module('plateia.services', [])
                 }
 
             };
-    }])
+        }])
     .factory('appReady', function () {
         return function (fn) {
 
@@ -888,9 +1004,9 @@ angular.module('plateia.services', [])
                     return myNotifications;
                 }
             };
-    }])
+        }])
     .factory('Geolocation', ['$rootScope', 'appReady', '$q',
-         function ($rootScope, appReady, $q) {
+        function ($rootScope, appReady, $q) {
             return {
                 getCurrentPosition: function (onSuccess, onError) {
                     var deferred = $q.defer();
@@ -926,7 +1042,7 @@ angular.module('plateia.services', [])
                     return deferred.promise;
                 }
             };
-    }])
+        }])
     .factory('Accelerometer', ['$rootScope', 'appReady',
         function ($rootScope, appReady) {
             return {
@@ -952,9 +1068,9 @@ angular.module('plateia.services', [])
                     });
                 }
             };
-    }])
+        }])
     .factory('Social', ['$rootScope', 'appReady', '$q',
-                        function ($rootScope, appReady, $q) {
+        function ($rootScope, appReady, $q) {
             var serviceName = 'Twitter1';
             return {
                 // Facebook
@@ -1003,6 +1119,7 @@ angular.module('plateia.services', [])
                         function twitterReady() {
                             console.log("Twitter is ready");
                         }
+
                         twitterHelper.init(serviceName, twitterReady);
                     });
                 },
@@ -1022,6 +1139,7 @@ angular.module('plateia.services', [])
                                 console.log("post failed");
                             }
                         }
+
                         twitterHelper.init(serviceName, twitterReady);
                     });
 
@@ -1060,7 +1178,7 @@ angular.module('plateia.services', [])
         }
     ])
     .factory('Contacts', ['$rootScope', 'appReady',
-       function ($rootScope, appReady) {
+        function ($rootScope, appReady) {
             return {
                 getContacts: function () {
                     intel.xdk.contacts.getContacts();
@@ -1073,20 +1191,20 @@ angular.module('plateia.services', [])
                         return myContacts;
 
                         /*for(var i=0;i<myContacts.length;i++) {
-                     //add row to table
-                     var contactInfo = intel.xdk.contacts.getContactData(myContacts[i]);
-                     var tr = document.createElement("tr");
-                     tr.setAttribute('id', 'pnid'+contactInfo.id);
-                     tr.setAttribute('onClick', 'document.getElementById("iden").value = '+contactInfo.id+';');
-                     tr.setAttribute('style', 'background-color:#B8BFD8');
-                     var id = document.createElement("td");
-                     id.innerHTML = contactInfo.id;
-                     tr.appendChild(id);
-                     var msg = document.createElement("td");
-                     msg.innerHTML = contactInfo.name;
-                     tr.appendChild(msg);
-                     table.appendChild(tr);
-                     }*/
+                         //add row to table
+                         var contactInfo = intel.xdk.contacts.getContactData(myContacts[i]);
+                         var tr = document.createElement("tr");
+                         tr.setAttribute('id', 'pnid'+contactInfo.id);
+                         tr.setAttribute('onClick', 'document.getElementById("iden").value = '+contactInfo.id+';');
+                         tr.setAttribute('style', 'background-color:#B8BFD8');
+                         var id = document.createElement("td");
+                         id.innerHTML = contactInfo.id;
+                         tr.appendChild(id);
+                         var msg = document.createElement("td");
+                         msg.innerHTML = contactInfo.name;
+                         tr.appendChild(msg);
+                         table.appendChild(tr);
+                         }*/
                     };
                     document.addEventListener('intel.xdk.contacts.get', contactsReceived, false);
                 },
@@ -1094,4 +1212,4 @@ angular.module('plateia.services', [])
                     intel.xdk.contacts.getContacts();
                 }
             };
-    }]);
+        }]);

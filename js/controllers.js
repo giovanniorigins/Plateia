@@ -2,8 +2,8 @@ var test;
 var facebookUserID = "me"; //me = the user currently logged into Facebook
 
 angular.module('plateia.controllers', [])
-    .run(['$rootScope', 'AppData', 'Social', 'SearchEngine', '$timeout', 'myService', '$ionicModal', '$ionicActionSheet', '$ionicPopup', '$templateCache', '$state', '$ionicNavBarDelegate', '$ionicLoading',
-        function ($rootScope, AppData, Social, SearchEngine, $timeout, myService, $ionicModal, $ionicActionSheet, $ionicPopup, $templateCache, $state, $ionicNavBarDelegate, $ionicLoading) {
+    .run(['$rootScope', 'AppData', 'Social', 'SearchEngine', '$timeout', 'myService', '$ionicModal', '$ionicActionSheet', '$ionicPopup', '$templateCache', '$state', '$ionicNavBarDelegate', '$ionicLoading', 'Deal',
+        function ($rootScope, AppData, Social, SearchEngine, $timeout, myService, $ionicModal, $ionicActionSheet, $ionicPopup, $templateCache, $state, $ionicNavBarDelegate, $ionicLoading, Deal) {
             $rootScope.appData = AppData;
             $rootScope.ADarrays = AppData.Arrays;
             $rootScope.ADcounts = AppData.Counts;
@@ -28,9 +28,6 @@ angular.module('plateia.controllers', [])
                 email_: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             };
 
-            //FastClick
-            FastClick.attach(document.body);
-
             // Loading
             $rootScope.showLoading = function (backdrop, delay) {
                 $rootScope.loading = $ionicLoading.show({
@@ -39,6 +36,7 @@ angular.module('plateia.controllers', [])
                     showDelay: delay || 0
                 });
             };
+
             $rootScope.hideLoading = function () {
                 if (angular.isDefined($rootScope.loading))
                     $ionicLoading.hide();
@@ -78,8 +76,8 @@ angular.module('plateia.controllers', [])
                 document.addEventListener('intel.xdk.device.orientation.change', function (a) {
                     $rootScope.ADappState.Orientation = a.orientation == "90" || a.orientation == "-90" ? 'landscape' : 'portrait';
                     if ($rootScope.ADappState.Orientation == 'landscape') {
-                        angular.element('body').removeClass('portrait');
-                        angular.element('body').addClass('landscape');
+                        $('body').removeClass('portrait');
+                        $('body').addClass('landscape');
                     }
                 })
             });
@@ -147,13 +145,18 @@ angular.module('plateia.controllers', [])
             };
 
             // Select Deal
-            $rootScope.selectDeal = function (deal, isRelated, toLoc) {
+            $rootScope.selectDeal = function (deal, issue, isRelated, toLoc) {
                 console.log(deal);
+                issue = angular.isDefined(issue) ? issue : false;
                 isRelated = angular.isDefined(isRelated) ? isRelated : false;
                 toLoc = angular.isDefined(toLoc) ? toLoc : false;
 
-                if (angular.element('#DealModal').length === 0 || isRelated) {
+                if ($('#DealModal').length === 0 || isRelated) {
                     $rootScope.activeDeal = deal;
+                    $rootScope.activeDeal.shop = issue.shop_by_shop_id;
+                    $rootScope.activeDeal.sale_start = moment(issue.start_date).toDate();
+                    $rootScope.activeDeal.sale_end = moment(issue.end_date).toDate();
+
                     var dealModal = $ionicModal.fromTemplateUrl('partials/deal-modal.tpl.html', {
                         scope: $rootScope,
                         animation: 'am-slide-right'
@@ -164,7 +167,7 @@ angular.module('plateia.controllers', [])
                         $timeout(function () {
                             $rootScope.modal = modal;
                             $rootScope.modal.show().then(function () {
-                                //angular.element('.modal-backdrop').click(function () {
+                                //$('.modal-backdrop').click(function () {
                                 //alert('yea');
                                 //});
                             });
@@ -186,7 +189,6 @@ angular.module('plateia.controllers', [])
             /* Object Misc Functions
              ******************************/
             $rootScope.favShop = function (shop) {
-                shop.faved = !shop.faved;
                 if (angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))) {
                     var favedShops = [];
                     favedShops = JSON.parse(intel.xdk.cache.getCookie('Faved_shops'));
@@ -195,7 +197,60 @@ angular.module('plateia.controllers', [])
                 } else {
                     intel.xdk.cache.setCookie('Faved_shops', JSON.stringify([shop.id]), '-1');
                 }
-                return shop.faved;
+                return true;
+            };
+
+            $rootScope.toCart = function(deal) {
+                if (angular.isDefined(intel.xdk.cache.getCookie('Shopping_list'))) {
+                    var shoppingList = [];
+                    shoppingList = JSON.parse(intel.xdk.cache.getCookie('Shopping_list'));
+                    if (shoppingList.indexOf(deal.id) != -1) {
+                        // Remove from list
+                        shoppingList.splice(shoppingList.indexOf(deal.id), 1);
+                        deal.like_num = deal.like_num - 1;
+                        Deal.update({
+                            id: deal.id,
+                            like_num: deal.like_num
+                        }, function(data){
+                            console.log(data);
+                            return data;
+                        })
+                    } else {
+                        // Add to list
+                        shoppingList.push(deal.id);
+                        deal.like_num = deal.like_num + 1;
+                        Deal.update({
+                            id: deal.id,
+                            like_num: deal.like_num
+                        }, function(data){
+                            console.log(data);
+                            return data;
+                        })
+                    }
+                    intel.xdk.cache.setCookie('Shopping_list', JSON.stringify(shoppingList), '-1');
+
+                } else {
+                    intel.xdk.cache.setCookie('Shopping_list', JSON.stringify([deal.id]), '-1');
+                    deal.like_num = deal.like_num + 1;
+                    Deal.update({
+                        id: deal.id,
+                        like_num: deal.like_num
+                    }, function(data){
+                        console.log(data);
+                        return data;
+
+                    })
+                }
+            };
+
+            $rootScope.inCart = function(deal) {
+                if (angular.isDefined(intel.xdk.cache.getCookie('Shopping_list'))) {
+                    var shoppingList = [];
+                    shoppingList = JSON.parse(intel.xdk.cache.getCookie('Shopping_list'));
+                    return shoppingList.indexOf(deal.id) != -1;
+                } else {
+                    return false;
+                }
             };
 
             /* Object Share Modal Functions
@@ -274,7 +329,7 @@ angular.module('plateia.controllers', [])
 
             $rootScope.doRefresh = function () {
                 $rootScope.safeApply(function () {
-                    angular.element('html, body').animate({
+                    $('html, body').animate({
                         scrollTop: 0
                     }, 400);
                 });
@@ -390,7 +445,7 @@ angular.module('plateia.controllers', [])
             /* Modal Functions */
             $rootScope.closeModal = function () {
                 $rootScope.modal.hide().then(function () {
-                    angular.element('.modal').addClass('opacity-hide');
+                    $('.modal').addClass('opacity-hide');
                     $rootScope.modal.remove();
                 });
             };
@@ -633,14 +688,14 @@ angular.module('plateia.controllers', [])
 
             /* Modal Functions */
             $scope.closeModal = function () {
-                if (angular.element('.policy').length) {
+                if ($('.policy').length) {
                     $scope.policy.hide().then(function () {
-                        angular.element('.policy').addClass('opacity-hide');
+                        $('.policy').addClass('opacity-hide');
                         $scope.policy.remove();
                     });
                 } else {
                     $scope.modal.hide().then(function () {
-                        angular.element('.modal').addClass('opacity-hide');
+                        $('.modal').addClass('opacity-hide');
                         $scope.modal.remove();
                     });
                 }
@@ -657,67 +712,48 @@ angular.module('plateia.controllers', [])
 
         }
     ])
-    .controller('HomeCtrl', ['$scope', '$q', 'myService', '$state', '$timeout', 'Device',
-        function ($scope, $q, myService, $state, $timeout, Device) {
-            $scope.ADappState.currentName = 'Marketplace';
+    .controller('HomeCtrl', ['$scope', '$q', 'Deal', 'Issue', '$state', '$timeout', 'Device',
+        function ($scope, $q, Deal, Issue, $state, $timeout, Device) {
+            $scope.ADappState.currentName = 'Sales';
             $scope.ADappState.currentApp = 'home';
+            $scope.Issues = {record:[]};
 
-            $scope.homeBanners = [
-                {
-                    title: 'Slide 1',
-                    src: 'images/slides/slide_1.jpg'
-                },
-                {
-                    title: 'Slide 2',
-                    src: 'images/slides/slide_2.jpg'
+            var myShops = angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))
+                ? JSON.parse(intel.xdk.cache.getCookie('Faved_shops')).toString()
+                : '';
+            $scope.Issues.record.length = 0;
+            Issue.get({ids:myShops}, function(data){
+                $scope.Issues = data;
+                $scope.$broadcast('scroll.refreshComplete');
+            }, function(data){
+                if (angular.isDefined(data.data.error[0].message)) {
+                    angular.forEach(data.data.error[0].context.record, function (value, key) {
+                        if (!angular.isString(value)){
+                            $scope.Issues.record.push(value);
+                        }
+                    });
                 }
-            ];
+            });
 
-            $scope.limit = 50;
-            $scope.start = 50;
-            $scope.busy = false;
-            $scope.prevCall = angular.isDefined($scope.deals) ? $scope.deals.length : 0;
-
-            $scope.loadMore = function (reload) {
-                reload = angular.isDefined(reload) ? reload : false;
-                if ($scope.busy === false && $scope.prevCall !== null && $scope.prevCall == $scope.limit) {
-                    var deferred = $q.defer();
-                    $scope.busy = true;
-                    var cache = $scope.start === 0 ? false : true;
-                    myService.getDeals('limit=' + $scope.limit + '&start=' + $scope.start, cache)
-                        .then(function (data) {
-                            if (reload && angular.isArray(data) && data.length > 0) {
-                                $scope.deals.length = 0;
-                            }
-                            angular.forEach(data, function (index) {
-                                $timeout(function () {
-                                    $scope.deals.push(index);
-                                }, 0);
-                            });
-                            $scope.prevCall = data;
-                            $scope.lastRefreshed = moment().toISOString();
-                            //console.log($scope.limit, ': ', data);
-                        }).then(function (data) {
-                            $scope.start += $scope.limit;
-                            $scope.busy = false;
-                            $scope.$broadcast('scroll.refreshComplete');
-                            $scope.$broadcast('scroll.infiniteScrollComplete');
-                            deferred.resolve(data);
-                        });
-                    return deferred.promise;
-                } else {
+            $scope.doRefresh = function () {
+                myShops = angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))
+                    ? JSON.parse(intel.xdk.cache.getCookie('Faved_shops')).toString()
+                    : '';
+                $scope.Issues.record.length = 0;
+                Issue.refresh({ids:myShops}, function(data){
+                    $scope.Issues = data;
                     $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                    return false;
-                }
-            };
-
-            $scope.onReload = function () {
-                $scope.prevCall = 50;
-                $scope.start = 0;
-
-                var promise = $scope.loadMore(true);
-                return promise;
+                }, function(data){
+                    if (angular.isDefined(data.data.error[0].message)) {
+                        angular.forEach(data.data.error[0].context.record, function (value, key) {
+                            if (!angular.isString(value)){
+                                $scope.Issues.record.push(value);
+                            }
+                        });
+                    }
+                    $scope.$broadcast('scroll.refreshComplete');
+                });
+                return true;
             };
 
             $scope.$on('doRefresh', function (e) {
@@ -727,7 +763,7 @@ angular.module('plateia.controllers', [])
 
             var defer = $q.defer();
             defer.promise.then(function () {
-                angular.element('#loading').hide();
+                //$('#loading').hide();
             });
 
             $scope.hideLoading();
@@ -739,12 +775,12 @@ angular.module('plateia.controllers', [])
 
             // Show and Hide search bar on scroll
             /*var sb1 = ionic.onGesture('dragup', function (event) {
-                angular.element('.bar-subheader').addClass('opacity-hide');
-            }, angular.element('.menu-content ion-content')[0]);
+                $('.bar-subheader').addClass('opacity-hide');
+            }, $('.menu-content ion-content')[0]);
 
             var sb2 = ionic.onGesture('dragdown', function (event) {
-                angular.element('.bar-subheader').removeClass('opacity-hide');
-            }, angular.element('.menu-content ion-content')[0]);*/
+                $('.bar-subheader').removeClass('opacity-hide');
+            }, $('.menu-content ion-content')[0]);*/
 
             $scope.$on('$destroy', function () {
 
@@ -758,8 +794,70 @@ angular.module('plateia.controllers', [])
                 }
             }, 0);
 
+            $scope.getColItemWidth = function (deal){
+                var a = '';
+                switch($scope.ADappState.Orientation){
+                    case 'portrait':
+                        a = '50%';
+                        break;
+                    case 'landscape':
+                        a = '33%';
+                        break;
+                }
+                return a;
+            };
+
+            $scope.getColItemHeight = function (deal, pObj){
+                var a = '';
+                $scope.parentWidth = $scope.parentWidth || $(pObj).width();
+                switch($scope.ADappState.Orientation){
+                    case 'portrait':
+                        var r1 = 0.8597701149425288;
+                        var r2 = 0.819718309859155;
+                        a = '50%';
+                        break;
+                    case 'landscape':
+                        console.log($scope.parentWidth * 0.33);
+                        var ratio = 1.1933534743202416;
+
+                        a = $scope.parentWidth * 0.33 * 1.1933534743202416 + 6;
+                        break;
+                }
+                return a;
+            }
+
         }
     ])
+    /*.controller('SalesCtrl', ['$scope', '$q', 'myService', '$state', '$timeout', 'Device',
+        function ($scope, $q, myService, $state, $timeout, Device) {
+
+            $scope.getColItemWidth = function (deal) {
+
+                switch($scope.ADappState.Orientation){
+                    case 'portrait':
+                        return '50%';
+                        break;
+                    case 'landscape':
+                        return '33%';
+                        break;
+                }
+            }
+
+            $scope.getColItemHeight = function (deal, pObj) {
+                $scope.parentWidth = $scope.parentWidth || $(pObj).width();
+                switch($scope.ADappState.Orientation){
+                    case 'portrait':
+                        return '50%';
+                        break;
+                    case 'landscape':
+                        if()
+                        return 359;
+                        break;
+                }
+            }
+
+        }
+    ])*/
     .controller('DealCtrl', ['$scope', '$timeout', 'myService', 'Geolocation', '$ionicLoading',
         function ($scope, $timeout, myService, Geolocation, $ionicLoading) {
             $scope.state = 'main';
@@ -769,9 +867,6 @@ angular.module('plateia.controllers', [])
                 switch (state || $scope.state) {
                 case 'main':
                     $scope.state = 'map';
-                    $timeout(function () {
-                        $scope.launchMap();
-                    }, 300);
                     break;
                 case 'map':
                     $scope.state = 'main';
@@ -781,20 +876,17 @@ angular.module('plateia.controllers', [])
                     if ($scope.state == 'map') {
                         //google.maps.event.clearInstanceListeners($scope.gMap);
                         $scope.gMap = null;
-                        //angular.element("#map-canvas").hide();
+                        //$("#map-canvas").hide();
                     }
                     $scope.state = 'main';
-                    $scope.loadSlider();
+                    //$scope.loadSlider();
                 }
             };
 
-            $scope.$on('Show Location', function () {
-                $scope.toggleState('main');
-            });
             $scope.closeModal = function () {
                 $scope.modal.hide();
                 $timeout(function () {
-                    angular.element('.modal').addClass('opacity-hide');
+                    $('.modal').addClass('opacity-hide');
                     $timeout(function () {
                         $scope.modal.remove();
                     }, 10);
@@ -805,308 +897,88 @@ angular.module('plateia.controllers', [])
                 $scope.modal.remove();
             });
 
-            $scope.dealImages = [{
-                title: '',
-                path: $scope.activeDeal.coupon_image
-            }];
-            if ($scope.activeDeal.coupon_images != 0)
-                $scope.dealImages = $scope.dealImages.concat($scope.activeDeal.coupon_images);
-
-            $scope.loadSlider = function () {
-                $timeout(function () {
-                    $scope.swipeCurrent = 1;
-                    window.mySwipe = new Swipe(document.getElementById('slider'), {
-                        speed: 400,
-                        auto: 3000,
-                        continuous: true,
-                        disableScroll: false,
-                        stopPropagation: false,
-                        callback: function (index, elem) {},
-                        transitionEnd: function (index, elem) {
-                            $scope.safeApply(function () {
-                                $scope.swipeCurrent = window.mySwipe.getPos() + 1;
-                            });
-                        }
-                    });
-
-                    $scope.swipeMax = window.mySwipe.getNumSlides();
-                }, 200);
-            };
-            $scope.loadSlider();
-
-            myService.getDealsByCategoryId($scope.activeDeal.category_id)
-                .then(function (data) {
-                    if (angular.isArray(data)) {
-                        angular.forEach(data, function (val, index) {
-                            if (val.id === $scope.activeDeal.id)
-                                data.splice(index, 1);
-                        });
-                    }
-                    $scope.relatedDeals = data;
-                });
-
-            myService.getShopById($scope.activeDeal.shop_id)
-                .then(function (data) {
-                    $scope.activeDeal.shop = data;
-                    $scope.hasDirections = data.shop_locations_data !== '' ? true : false;
-                });
-
-            $scope.thumbs = function (deal, direction) {
-                myService.thumbs(deal.id, deal.url, direction)
-                    .then(function (success) {
-                        $scope.activeDeal.thumbs_num = success;
-                    }, function (failure) {
-                        //console.log(failure);
-                    });
-
-            };
-
             $scope.share = function (activeDeal) {
                 $scope.openShare(activeDeal);
             };
-
-            $scope.launchMap = function () {
-
-                $scope.loading = $ionicLoading.show({
-                    content: 'Loading directions',
-                    showBackdrop: false
-                });
-
-                $scope.close = function () {
-                    google.maps.event.clearInstanceListeners($scope.gMap);
-                    $scope.gMap = null;
-                    angular.element("#map-canvas").hide();
-                    //$scope.closeModal();
-                };
-
-                if ($scope.activeDeal.shop.shop_locations_data.indexOf('\r\n') != -1) {
-                    $scope.destinations = [];
-                    var list = $scope.activeDeal.shop.shop_locations_data.split('\r\n');
-                    angular.forEach(list, function (value, index) {
-                        var a = value.split(',');
-                        $scope.destinations.push({
-                            title: $scope.activeDeal.shop.shop_locations[index],
-                            showWindow: false,
-                            LatLng: new google.maps.LatLng(a[0], a[1]),
-                            latitude: a[0],
-                            longitude:a[1]
-                        });
-                    });
-
-
-                } else {
-                    var a = $scope.activeDeal.shop.shop_locations_data.split(',');
-                    $scope.destinations = {
-                        title: $scope.activeDeal.shop.shop_locations,
-                        showWindow: false,
-                        LatLng: new google.maps.LatLng(a[0], a[1]),
-                        coords: {
-                            latitude: a[0],
-                            longitude:a[1]
-                        }
-                    };
-                }
-                console.log('Markers: ', $scope.destinations);
-
-                Geolocation.getCurrentPosition()
-                    .then(function (success) {
-                            //console.log(success);
-                            //angular.element('#map-canvas').innerHeight(300);
-                            // Google Maps Code
-                            var loadedOnce = false;
-                            var me = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
-
-                            var boundsBS = new google.maps.LatLngBounds(
-                                new google.maps.LatLng(24.960395, -77.590754),
-                                new google.maps.LatLng(25.102868, -77.239879)
-                            );
-
-                            $scope.map = {
-                                center: {
-                                    latitude: success.coords.latitude,
-                                    longitude: success.coords.longitude
-                                },
-                                zoom: 11,
-                                options: {
-                                    panControl: false,
-                                    maxZoom: 20,
-                                    minZoom: 3,
-                                    center: me,
-                                    zoom: 11,
-                                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                                    provideRouteAlternatives: true,
-                                    streetViewControl: false,
-                                    zoomControl: true,
-                                    zoomControlOptions: {
-                                        style: google.maps.ZoomControlStyle.DEFAULT,
-                                        position: google.maps.ControlPosition.LEFT_TOP
-                                    }
-                                },
-                                dragging: false,
-                                bounds: {},
-                                events: {
-                                    tilesloaded: function (map, eventName, originalEventArgs) {
-                                        console.log('Tiles Loaded');
-
-                                        if (loadedOnce === false) {
-                                            console.log(loadedOnce);
-                                            $scope.gMap = $scope.map.control.getGMap();
-                                            google.maps.event.trigger($scope.gMap, 'resize');
-                                            console.log($scope.gMap);
-                                            loadedOnce = true;
-                                        } else {
-                                            console.log(loadedOnce);
-                                        }
-
-                                    }
-                                }
-                            };
-                            var renderOptions = {
-                                panel: angular.element('#MapAside .directions')[0],
-                                suppressBicyclingLayer: true,
-                                polylineOptions: {
-                                    clickable: true
-                                }
-                            };
-
-
-                            var directionsService = new google.maps.DirectionsService(),
-                                directionsDisplay = new google.maps.DirectionsRenderer(renderOptions);
-
-                            //$scope.gMap = new google.maps.Map(document.getElementById("map-canvas"), $scope.map.options);
-                        $timeout(function(){
-
-                        },500);
-                            //directionsDisplay.setMap($scope.map);
-                            //directionsDisplay.setOptions(renderOptions);
-
-                            // Set Markers AND/OR Routes
-                            if (angular.isArray($scope.destinations)) {
-                                var markers = [];
-                                angular.forEach($scope.destinations, function (val, index) {
-                                    $timeout(function () {
-                                        markers.push(new google.maps.Marker({
-                                            position: val.LatLng,
-                                            title: val.title,
-                                            map: $scope.gMap,
-                                            draggable: false,
-                                            animation: google.maps.Animation.DROP
-                                        }));
-                                        // Add a listener for the click event for each marker
-                                        google.maps.event.addListener(markers[index], 'click', function () {
-                                            var request = {
-                                                origin: me,
-                                                destination: val.LatLng,
-                                                travelMode: google.maps.TravelMode.DRIVING
-                                            };
-
-                                            directionsService.route(request, function (result, status) {
-                                                if (status == google.maps.DirectionsStatus.OK) {
-                                                    directionsDisplay.setDirections(result);
-                                                } else {
-                                                    //console.log('Status: ', status);
-                                                    //console.log('Result: ', result);
-                                                }
-                                            });
-
-                                        });
-                                    }, 200);
-                                });
-                            } else {
-                                var request = {
-                                    origin: me,
-                                    destination: $scope.destinations.LatLng,
-                                    travelMode: google.maps.TravelMode.DRIVING
-                                };
-
-                                directionsService.route(request, function (result, status) {
-                                    if (status == google.maps.DirectionsStatus.OK) {
-                                        directionsDisplay.setDirections(result);
-                                    } else {
-                                        //console.log('Status: ', status);
-                                        //console.log('Result: ', result);
-                                    }
-                                });
-                            }
-
-
-                        $ionicLoading.hide();
-                        },
-                        function (failure) {
-                            //console.log(failure);
-                        });
-            };
-
-            $timeout(function () {
-                test = $scope.gMap;
-                //var center = $scope.gMap.getCenter();
-                google.maps.event.trigger($scope.gMap, "resize");
-                //$scope.gMap.setCenter(center);
-            }, 300);
         }
     ])
-    .controller('ShopsCtrl', ['$scope', 'myService', '$q', '$ionicModal',
-    function ($scope, myService, $q, $ionicModal) {
+    .controller('ShopsCtrl', ['$scope', 'Shop', '$q', '$ionicModal', '$ionicPopup', 'Request',
+        function ($scope, Shop, $q, $ionicModal, $ionicPopup, Request) {
             $scope.ADappState.currentName = 'Stores';
             $scope.ADappState.currentApp = 'stores';
-            $scope.activeCategory = undefined;
 
-            $scope.limit = 50;
-            $scope.start = 50;
-            $scope.busy = false;
-            $scope.prevCall = angular.isDefined($scope.shops) ? $scope.shops.length.length : 0;
+            var myShops = angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))
+                ? JSON.parse(intel.xdk.cache.getCookie('Faved_shops')).toString()
+                : '';
+            $scope.checkSelected = function (shop){
+                return shop.checked = myShops.indexOf(shop.id) != -1
+            };
 
-            $scope.loadMore = function () {
-                if ($scope.busy === false && $scope.prevCall !== null && $scope.prevCall == $scope.limit) {
-                    var deferred = $q.defer();
-                    $scope.busy = true;
-                    var cache = $scope.start === 0 ? false : true;
-                    myService.getShops('limit=' + $scope.limit + '&start=' + $scope.start, cache)
-                        .then(function (data) {
-                            angular.forEach(data, function (index) {
-                                $scope.shops.push(index);
-                            });
-                            $scope.lastRefreshed = moment().toISOString();
-                            $scope.prevCall = data;
-                        }).then(function (data) {
-                            $scope.start += $scope.limit;
-                            $scope.busy = false;
-                            $scope.$broadcast('scroll.refreshComplete');
-                            $scope.$broadcast('scroll.infiniteScrollComplete');
-                            deferred.resolve(data);
-                        });
-                    return deferred.promise;
-                } else {
+            $scope.doRefresh = function () {
+                $scope.Shops.length = 0;
+                Shop.refresh(function(data){
+                    $scope.Shops = data;
+
+                    myShops = angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))
+                        ? JSON.parse(intel.xdk.cache.getCookie('Faved_shops')).toString()
+                        : '';
+                    angular.forEach($scope.Shops.record, function(v){
+                        v.checked = myShops.indexOf(v.id) != -1;
+                    });
+
                     $scope.$broadcast('scroll.refreshComplete');
-                    $scope.$broadcast('scroll.infiniteScrollComplete');
-                    return false;
-                }
+                }, function(data){
+                    $scope.$broadcast('scroll.refreshComplete');
+                    alert('Check Internet Connection.')
+                });
             };
 
-            $scope.onReload = function () {
-                $scope.prevCall = 50;
-                $scope.start = 0;
-                $scope.shops.length = 0;
-                var promise = $scope.loadMore();
-                return promise;
+            $scope.selectedShop = function(shop) {
+                $scope.favShop(shop);
             };
-
-            $scope.$on('doRefresh', function (e) {
-                $scope.ADappState.refreshing = true;
-                $scope.onReload();
-            });
 
             $scope.shopShare = function (shop) {
                 $scope.openShare(shop);
+            };
+
+            // Request a Store
+            $scope.popupStoreRequest = function() {
+                $scope.reqData = {
+                    request: 'stores',
+                    text: ''
+                };
+
+                // An elaborate, custom popup
+                var myPopup = $ionicPopup.show({
+                    template: '<input type="text" ng-model="reqData.text" placeholder="Enter Store Name">',
+                    title: 'Request a Store',
+                    scope: $scope,
+                    buttons: [
+                        { text: 'Cancel' },
+                        {
+                            text: '<b>OK</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+                                if (!$scope.reqData.text || $scope.reqData.text.length < 3) {
+                                    e.preventDefault();
+                                } else {
+                                    Request.save($scope.reqData);
+                                    return $scope.reqData;
+                                }
+                            }
+                        }
+                    ]
+                });
+                myPopup.then(function(res) {
+                    console.log('Tapped!', res);
+                });
             };
 
             var defer = $q.defer();
             defer.promise.then(function () {
                 $scope.hideLoading();
             });
-
             defer.resolve();
-
         }
     ])
     .controller('MapCtrl', ['$scope', 'Geolocation', '$timeout', 'AppData',
@@ -1116,10 +988,10 @@ angular.module('plateia.controllers', [])
 
             $scope.closeModal = function () {
                 google.maps.event.clearInstanceListeners($scope.gMap);
-                //angular.element("#map-canvas").hide();
+                //$("#map-canvas").hide();
                 $scope.modal.hide();
                 $timeout(function () {
-                    angular.element('.modal').addClass('opacity-hide');
+                    $('.modal').addClass('opacity-hide');
                     $timeout(function () {
                         $scope.modal.remove();
                     }, 10);
@@ -1151,7 +1023,7 @@ angular.module('plateia.controllers', [])
             Geolocation.getCurrentPosition()
                 .then(function (success) {
                         //console.log(success);
-                        angular.element('#map-canvas').innerHeight(angular.element('#MapAside') * 0.5);
+                        $('#map-canvas').innerHeight($('#MapAside') * 0.5);
                         // Google Maps Code
                         var me = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
 
@@ -1169,7 +1041,7 @@ angular.module('plateia.controllers', [])
                             }
                         };
                         var renderOptions = {
-                            panel: angular.element('#MapAside .directions')[0],
+                            panel: $('#MapAside .directions')[0],
                             suppressBicyclingLayer: true,
                             polylineOptions: {
                                 clickable: true
@@ -1310,14 +1182,14 @@ angular.module('plateia.controllers', [])
 
         }
     ])
-    .controller('CategoriesCtrl', ['$scope', 'myService',
-        function ($scope, myService) {
+    .controller('CategoriesCtrl', ['$scope', 'Category',
+        function ($scope, Category) {
             $scope.ADappState.currentName = 'Categories';
             $scope.ADappState.currentApp = 'categories';
 
             $scope.onReload = function () {
                 $scope.lastRefreshed = moment().toISOString();
-                var promise = myService.getCategories();
+                var promise = Category.get();
                 return promise;
             };
 

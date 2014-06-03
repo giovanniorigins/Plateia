@@ -1,15 +1,55 @@
-<!DOCTYPE html>
 <ion-view title="{{ADappState.currentName}}">
     <ion-content on-scroll="toggleSearchbar($event)" class="has-header" ng-controller="HomeCtrl" bindonce="">
-        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)" pulling-text="Pull down to refresh<br><small>{{updated}}</small>" refreshing-text="Refreshing" refreshing-icon="ion-refreshing" on-refresh="onReload()"></ion-refresher>
+        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)"
+                       pulling-text="Pull down to refresh<br><small>{{updated}}</small>"
+                       refreshing-text="Refreshing" refreshing-icon="ion-refreshing"
+                       on-refresh="doRefresh()"></ion-refresher>
 
-        <section bo-if="ADappState.Type=='isPhone'">
+        <div class="row">
+            <form name="subSearch" class="item item-input-inset search-bar am-fade-and-slide-bottom col" search-bar>
+                <label class="item-input-wrapper">
+                    <i class="icon ion-ios7-search placeholder-icon"></i>
+                    <input type="search" placeholder="Search" ng-model="searchData.search" ng-keyup="search($event)">
+                    <i class="icon ion-close-circled placeholder-icon" ng-show="searchData.search.length > 0" ng-click="searchData.search = ''" style="font-size:30px;"></i>
+                </label>
+                <button type="submit" class="button button-clear hide">
+                    Search
+                </button>
+            </form>
+        </div>
+        <ion-list animation="slide-left" class="deals-list">
+
+            <div class="item item-divider" ng-repeat-start="issue in Issues.record | orderBy:'shop_by_shop_id.title'">
+                {{issue.shop_by_shop_id.title}}
+            </div>
+
+            <ion-item class="item-avatar-left item-icon-right" ng-class="{'isPhone':'','isTablet':'' }[ADappState.Type]"
+                      ng-repeat-end ng-repeat="deal in issue.deals_by_issue_id"
+                      bindonce="issue.deals_by_issue_id" ng-click="selectDeal(deal, issue);">
+                <img ng-if="deal.deal_images == '' || deal.deal_images === null" bo-src="issue.shop_by_shop_id.shop_image">
+                <img ng-if="deal.deal_images.length != 0 && deal.deal_images != null" bo-src="deal.deal_images">
+                <h3 bo-text="deal.title"></h3>
+                <span bo-html="'<strong class=\'balanced\'>$'+(deal.new_price|number:2:2)+'</strong>, '+deal.size"></span>
+                <p ng-pluralize count="deal.like_num" when="{'0': '', 'one': '1 user added', 'other': '{} users added'}"></p>
+
+                <i class="icon ion-chevron-right icon-accessory"></i>
+
+                <ion-option-button class="button-clear" ng-click='openShare(deal)'><i class="icon ion-share"></i></ion-option-button>
+                <ion-option-button class="button-clear" ng-click="toCart(deal)">
+                    <i ng-if="inCart(deal) == false" class="icon ion-ios7-cart positive"></i>
+                    <i ng-if="inCart(deal) == true" class="icon ion-checkmark-round balanced"></i>
+                </ion-option-button>
+            </ion-item>
+
+        </ion-list>
+
+        <!--<section bo-if="ADappState.Type=='isPhone'">
             <ng-include src="'partials/deal-phone.tpl.html'"></ng-include>
         </section>
 
         <section bo-if="ADappState.Type=='isTablet'">
             <ng-include src="'partials/deal-tablet.tpl.html'"></ng-include>
-        </section>
-        <ion-infinite-scroll on-infinite="loadMore()" distance="1%"></ion-infinite-scroll>
+        </section>-->
+
     </ion-content>
 </ion-view>
