@@ -1,25 +1,9 @@
 <!DOCTYPE html>
-<ion-view title="{{ADappState.currentName}}">
-    <ion-content class="has-header" ng-controller="ShopsCtrl" bindonce>
-        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)"
-                       pulling-text="Pull down to refresh<br><small>{{updated}}</small>"
-                       refreshing-text="Refreshing"
-                       refreshing-icon="ion-refreshing"
-                       on-refresh="doRefresh()"></ion-refresher>
-        <ul class="list">
-            <li bo-id="'shop-' + shop.id" class="item item-avatar item-checkbox item-checkbox-right"
-                ng-repeat="shop in Shops.record track by shop.id" bindonce="Shops" ng-init="checkSelected(shop)">
-                <img bo-src="shop.shop_image" />
-                <label class="checkbox" for="checkbox_{{$index}}">
-                    <input bo-id="'checkbox_' + $index" class="shop-checkbox" type="checkbox" ng-model="shop.checked" ng-change="selectedShop(shop)" >
-                </label>
-                {{shop.title}}
-            </li>
-            <a ng-show="Shops" class="item item-icon-left" href="javascript:;" ng-click="popupStoreRequest()">
-                <i class="icon ion-help"></i>
-                Request a Store
-            </a>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
 
-        </ul>
-    </ion-content>
-</ion-view>
+</body>
+</html>

@@ -3,17 +3,16 @@ function strict() {
 }
 
 var Marketplace = angular.module('plateia', [
-    //'ngRoute',
+    'ngRoute',
     //'ngAnimate',
+    //'google-maps',
+    'angular-tour',
     'ngResource',
-    //'ngSanitize',
     'ngDreamFactory',
     'pasvaz.bindonce',
     'rn-lazy',
-    'google-maps',
     'jmdobry.angular-cache',
     'ionic',
-    'ionic.contrib.frostedGlass',
     'ui.router',
     'ui.router.stateHelper',
     'plateia.filters',
@@ -37,11 +36,21 @@ Marketplace.config(['$stateProvider', '$urlRouterProvider',
                 })
                 .state('index', {
                     //parent: 'nav',
-                    url: '/',
-                    templateUrl: 'partials/index.html',
-                    controller: ['$scope', function ($scope) {
-
-                    }],
+                    url: '/index',
+                    templateUrl: 'partials/sales.html',
+                    controller: function () {
+                    },
+                    resolve: {
+                        //GetAppData: AppData.resolve,
+                    },
+                    depth: 1
+                })
+                .state('shoppingList', {
+                    //parent: 'nav',
+                    url: '/shopping-list',
+                    templateUrl: 'partials/shopping-list.html',
+                    controller: function () {
+                    },
                     resolve: {
                         //GetAppData: AppData.resolve,
                     },
@@ -63,6 +72,7 @@ Marketplace.config(['$stateProvider', '$urlRouterProvider',
                     url: '/categories',
                     templateUrl: 'partials/categories.html',
                     controller: function ($scope, AppData, Categories) {
+                        console.log('categories route controller...');
                         $scope.ADarrays.Categories = AppData.Arrays.Categories = Categories;
                     },
                     resolve: {
@@ -131,10 +141,10 @@ Marketplace.config(['$stateProvider', '$urlRouterProvider',
                     },
                     depth: 1
                 })
-                .state('shops', {
+                .state('settings-shops', {
                     //parent: 'nav',
                     url: '/settings/shops',
-                    templateUrl: 'partials/shops.html',
+                    templateUrl: 'partials/settings-shops.html',
                     controller: function ($scope, Shops) {
                         $scope.Shops = Shops;
                     },
@@ -183,7 +193,7 @@ Marketplace.config(['$stateProvider', '$urlRouterProvider',
                     depth: 1
                 });
 
-            $urlRouterProvider.otherwise("/");
+            $urlRouterProvider.otherwise("/index");
 
         }])
     .constant('DSP_URL', 'https://dsp-gorigins.cloud.dreamfactory.com')
@@ -255,15 +265,6 @@ angular.module('plateia.services', [])
                 AllowPush: intel.xdk.cache.getCookie('Allow_Push') == 'true' || false,
                 deviceType: intel.xdk.isphone ? 'isPhone' : 'isTablet'
             },
-            BaseURL: 'http://salepoint.gorigins.com/',
-            UploadsURL: 'http://salepoint.gorigins.com/uploads/',
-            API: {
-                Base: 'http://salepoint.gorigins.com/api/',
-                Deals: 'http://salepoint.gorigins.com/api/deals/',
-                Shops: 'http://salepoint.gorigins.com/api/shops/',
-                Categories: 'http://salepoint.gorigins.com/api/categories/',
-                Users: 'http://salepoint.gorigins.com/api/users/'
-            },
             User: null,
             UserCreds: {
                 prevent_csrf: 0,
@@ -312,12 +313,15 @@ angular.module('plateia.services', [])
     .factory('Category', ['$resource', 'ServiceData',
         function ($resource, ServiceData) {
             "use strict";
-            return $resource(ServiceData.DB + '/categories/:id/?fields=*', {}, {
+            return $resource(ServiceData.DB + '/categories/:id/?fields=*&related=deals_by_category_id%2Cshops_by_deal', {}, {
                 update: {
                     method: 'PUT'
                 },
                 query: {
                     method: 'GET', isArray: false
+                },
+                refresh: {
+                    method: 'GET', cache: false
                 }
             });
         }])
@@ -337,7 +341,7 @@ angular.module('plateia.services', [])
     }])
     .factory('Deal', ['$resource', 'ServiceData', function ($resource, ServiceData) {
         "use strict";
-        return $resource(ServiceData.DB + '/deal/:id/?fields=*&ids=:ids&order=shop_id%20ASC&related=shop_by_shop_id%2Ccategories_by_category_id%2Cissues_by_issue_id&id_field=shop_id', {},
+        return $resource(ServiceData.DB + '/deal/:id/?fields=*&ids=:ids&order=id%20ASC&related=shop_by_shop_id%2Ccategories_by_category_id%2Cissues_by_issue_id', {},
             {
                 update: {
                     method: 'PUT', url: ServiceData.DB + '/deal/:id/?fields=*' },
@@ -413,253 +417,6 @@ angular.module('plateia.services', [])
             });
 
             $http.defaults.cache = $angularCacheFactory.get('apiCache');
-
-            /*** Get Resource lists ***/
-                // Get All Deals
-            obj.getDeals = function (args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                var Data = $resource(AppData.API.Deals + '*.json' + args, {}, {
-                    cache: cache
-                });
-                var data = Data.get({}, function () {
-                    intel.xdk.cache.setCookie('All_Deals', JSON.stringify([data.deals]), '-1');
-                    deferred.resolve(data.deals);
-                }, function () {
-                    // failure
-                    if (angular.isDefined(intel.xdk.cache.getCookie('All_Deals'))) {
-                        var deals = JSON.parse(intel.xdk.cache.getCookie('All_Deals'));
-                        deferred.resolve(deals);
-                    } else {
-                        intel.xdk.cache.setCookie('All_Deals', JSON.stringify([data.deals]), '-1');
-                        deferred.reject('Check internet connection.');
-                    }
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-            // Get All Shops
-            obj.getShops = function (args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                var Data = $resource(AppData.API.Shops + '*.json' + args, {}, {
-                    cache: cache
-                });
-                var data = Data.get({}, function () {
-                    intel.xdk.cache.setCookie('All_Shops', JSON.stringify(data.shops), '-1');
-
-                    // Faved Shops
-                    if (angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))) {
-                        var favedShops = JSON.parse(intel.xdk.cache.getCookie('Faved_shops'));
-                        angular.forEach(data.shops, function (v) {
-                            if (favedShops.indexOf(v.id) != -1)
-                                v.faved = true;
-                        });
-                    }
-                    //AppData.Arrays.Shops = data.shops;
-                    //intel.xdk.cache.setCookie( 'API_Shops', JSON.stringify( data.shops ), '-1' );
-                    deferred.resolve(data.shops);
-                }, function () {
-                    // failure
-                    if (angular.isDefined(intel.xdk.cache.getCookie('All_Shops'))) {
-                        var shops = JSON.parse(intel.xdk.cache.getCookie('All_Shops'));
-                        deferred.resolve(shops);
-                    } else {
-                        intel.xdk.cache.setCookie('All_Shops', JSON.stringify([data.deals]), '-1');
-                        deferred.reject('Check internet connection.');
-                    }
-                });
-
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-            // Get All Categories
-            obj.getCategories = function (args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                var Data = $resource(AppData.API.Categories + '*.json' + args, {}, {
-                    cache: cache
-                });
-                var data = Data.get({}, function () {
-                    AppData.Arrays.Categories = data.categories;
-
-                    // SetCookie for Data
-                    intel.xdk.cache.setCookie('API_Categories', JSON.stringify(data.categories), '-1');
-                    deferred.resolve(data.categories);
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-
-            /*** Get Resource by ID ***/
-                // Get Deal by ID
-            obj.getDealById = function (id, args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                var Data = $resource(AppData.API.Deals + ':id', {
-                    id: '@id'
-                }, {
-                    cache: cache
-                });
-                var data = Data.get({
-                    id: id
-                }, function (data) {
-                    deferred.resolve(data.deal);
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-            // Get Shop by ID
-            obj.getShopById = function (id, args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                if (angular.isUndefined(id)) {
-                    deferred.reject('No ID given!');
-                    LoadingService.loaded();
-                    return deferred.promise;
-                }
-
-                var Data = $resource(AppData.API.Shops + id + '.json' + args, {
-                    id: '@id'
-                }, {
-                    cache: cache
-                });
-                var data = Data.get({
-                    id: id
-                }, function () {
-                    deferred.resolve(data.shop);
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-            // Get Category by ID
-            obj.getCategoryById = function (id, args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                if (angular.isUndefined(id)) {
-                    deferred.reject('No ID given!');
-                    LoadingService.loaded();
-                    return deferred.promise;
-                }
-
-                var Data = $resource(AppData.API.Categories + id + '.json' + args, {
-                    id: '@id'
-                }, {
-                    cache: cache
-                });
-                var data = Data.get({
-                    id: id
-                }, function () {
-                    deferred.resolve(data.category);
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-
-            /*** Get relation by resource ID ***/
-                // Get Deals by Category ID
-            obj.getDealsByCategoryId = function (id, args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) ? '' : '?' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                if (angular.isUndefined(id)) {
-                    deferred.reject('No ID given!');
-                    LoadingService.loaded();
-                    return deferred.promise;
-                }
-
-                var Data = $resource(AppData.API.Categories + ':id' + '/deals.json' + args, {
-                    id: '@id'
-                }, {
-                    cache: cache
-                });
-                var data = Data.get({
-                    id: id
-                }, function () {
-                    deferred.resolve(data.deals);
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-
-            /*** Searches ***/
-                // Get Deals by terms
-            obj.getDealsBySearch = function (args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-                args = angular.isUndefined(args) || args.length === 0 ? '?terms=%' : '?terms=' + args;
-                cache = angular.isUndefined(cache) ? true : cache;
-
-                var Data = $resource(AppData.API.Deals + 'search.json' + args, {}, {
-                    cache: cache
-                });
-                var data = Data.get({}, function () {
-                    deferred.resolve(data.deals);
-                });
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-
-            /*** User Functions ***/
-                // User Register
-            obj.userRegistration = function (args, cache) {
-                LoadingService.loading(false);
-                var deferred = $q.defer();
-
-                $http.post(AppData.API.Users + 'register.json?' + $.param(args), {
-                    cache: false
-                })
-                    .success(function (data, status, headers, config) {
-
-                        switch (data.status) {
-                            case 'success':
-                                AppData.UserCreds.username = args.username;
-                                AppData.UserCreds.password = args.password;
-
-                                deferred.resolve('Account Creation Successful');
-                                intel.xdk.cache.setCookie('User_Login', JSON.stringify({
-                                    'username': args.username,
-                                    'password': args.password
-                                }), '-1');
-                                obj.userLogin(AppData.UserCreds);
-                                break;
-                            case 'error':
-                                deferred.reject(data.messages);
-                                break;
-                            case 'failed':
-                                deferred.reject('Account Creation Failed!');
-                                break;
-                        }
-                    })
-                    .error(function (data, status, headers, config) {
-                        deferred.reject('Failed to connect, check connection.');
-                        return deferred.promise;
-                    });
-
-                LoadingService.loaded();
-                return deferred.promise;
-            };
-
             // User Login
             obj.userLogin = function () {
                 LoadingService.loading(false);
@@ -924,13 +681,10 @@ angular.module('plateia.services', [])
                 loading: function (background) {
                     background = angular.isDefined(background) ? background : true;
                     intel.xdk.notification.showBusyIndicator();
-                    /*if (!background)
-                     angular.element('#loading').fadeIn(100);*/
                 },
                 loaded: function () {
                     $timeout(function () {
                         intel.xdk.notification.hideBusyIndicator();
-                        //angular.element('#loading').fadeOut(100);
                     }, 800);
                 }
             };

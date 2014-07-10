@@ -1,12 +1,12 @@
-<ion-view hide-nav-bar="true" hide-back-button="true" title="Welcome" class="welcome" ng-controller="WelcomeCtrl">
-    <!--<ion-nav-buttons side="right">
+<ion-view hide-nav-bar="false" hide-back-button="true" title="{{ADappState.currentName}}" class="welcome" ng-controller="WelcomeCtrl">
+    <ion-nav-buttons side="right">
         <button class="button button-clear no-animation" ng-click="close();">
             Skip Intro
             <span class="ion ion-chevron-right"></span>
         </button>
-    </ion-nav-buttons>-->
+    </ion-nav-buttons>
 
-    <ion-slide-box disable-scroll="false">
+    <ion-slide-box disable-scroll="false" class="has-header">
         <ion-slide>
             <ion-scroll class="padding">
                 <h2 class="text-center">Welcome to
@@ -20,31 +20,21 @@
         </ion-slide>
         <ion-slide>
             <ion-scroll class="padding">
-                <h1 class="text-center">View all the latest deals
-                    <br>and seach.</h1>
-                <div class="row">
-                    <!--<div class="col">
-                        <div id="list">
-                            <a class="item item-icon-left active" href="#/" nourl>
-                                <span class="icon ion-home"></span>
-                                Home
-                            </a>
-
-                            <a class="item item-icon-left" href="#/shops" nourl style="opacity:.6">
-                                <span class="icon ion-bag"></span>
-                                Shops
-                            </a>
-
-                            <a class="item item-icon-left" href="#/categories" nourl style="opacity:.6">
-                                <span class="icon ion-filing"></span>
-                                Categories
-                            </a>
-                        </div>
-                    </div>-->
-                    <div class="col">
-                        <img class="text-center" src="images/temp/home.png" style="width:100%;height:auto;">
-                    </div>
-                </div>
+                <h1 class="text-center">Select you favorite shops</h1>
+                <ul class="list">
+                    <li bo-id="'shop-' + shop.id" class="item item-avatar item-checkbox item-checkbox-right"
+                        ng-repeat="shop in Shops.record track by shop.id | orderBy:'title'" bindonce="Shops" ng-init="checkSelected(shop)">
+                        <img bo-src="shop.shop_image" />
+                        <label class="checkbox" for="checkbox_{{$index}}">
+                            <input bo-id="'checkbox_' + $index" class="shop-checkbox" type="checkbox" ng-model="shop.checked" ng-change="selectedShop(shop)" >
+                        </label>
+                        {{shop.title}}
+                    </li>
+                    <a ng-show="Shops" class="item item-icon-left" href="javascript:;" ng-click="popupStoreRequest()">
+                        <i class="icon ion-help"></i>
+                        Request a Store
+                    </a>
+                </ul>
 
             </ion-scroll>
         </ion-slide>

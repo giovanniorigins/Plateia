@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<ion-view title="{{ADappState.currentName}}">
+    <div class="bar bar-subheader" ng-if="viewSortStatus">
+        <div class="button-bar">
+            <a class="button button-calm" ng-class="{true:'button-balanced'}[currentSort == 'shops']" ng-click="changeSort('shops');">Shops</a>
+            <a class="button button-calm" ng-class="{true:'button-balanced'}[currentSort == 'deals']" ng-click="changeSort('deals');">Deals</a>
+        </div>
+    </div>
+    <ion-content class="has-header" ng-controller="HomeCtrl" bindonce="" ng-class="{true:'has-subheader'}[viewSortStatus]">
+        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)"
+                       pulling-text="Pull down to refresh<br><small>{{updated}}</small>"
+                       refreshing-text="Refreshing" refreshing-icon="ion-refreshing"
+                       on-refresh="doRefresh()"></ion-refresher>
+
+        <section bo-if="ADappState.Type=='isPhone'">
+            <ng-include src="'partials/deal-phone.tpl.html'"></ng-include>
+        </section>
+
+        <section bo-if="ADappState.Type=='isTablet'">
+            <ng-include src="'partials/deal-tablet.tpl.html'"></ng-include>
+        </section>
+
+    </ion-content>
+</ion-view>

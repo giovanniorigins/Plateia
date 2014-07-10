@@ -14,7 +14,7 @@
     <!-- Framework Scripts-->
     <script type="text/javascript" src="intelxdk.js"></script>
     <script type="text/javascript" src="xhr.js"></script>
-    <script type="text/javascript" src="cordova.js"></script>
+    <!--<script type="text/javascript" src="cordova.js"></script>-->
 
     <!-- Needed for Cordova/PhoneGap (will be a 404 during development)-->
     <script type="text/javascript" src="lib/ionic.bundle.js"></script>
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/utility.js"></script>
     <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAPAQrP_1XAvkxlG4G0ljjfmyPYzEfWCi4&sensor=false"></script>-->
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>-->
 
     <!-- AngularJ Scrpts-->
     <!--<script type="text/javascript" src="lib/angular/angular.js"></script>
@@ -83,9 +83,9 @@
 
 <ion-side-menus ng-cloak>
     <ion-side-menu-content>
-        <ion-nav-bar class="bar-positive" animation="nav-title-slide-ios7">
+        <ion-nav-bar class="" animation="nav-title-slide-ios7" ng-class="{true:'bar-light', false:'bar-positive'}[ADappState.currentApp == 'intro']">
             <ion-nav-back-button class="button button-icon ion-chevron-left" ng-class="{'hide':ADappState.depth==1}">
-                {{getPreviousTitle() || 'Back'}}
+                {{(getPreviousTitle()|cut:15:true) || 'Back'}}
             </ion-nav-back-button>
             <ion-nav-buttons side="left">
                 <button menu-toggle="left" class="button button-icon icon ion-navicon"
@@ -101,45 +101,38 @@
 
         <ion-content has-header="true">
             <ul class="list" id="main-nav">
-                <!--<li>
-                    <a ng-if="appData.User === null" class="item item-icon-left item-icon-right" href="#" nourl ng-click="siteLogin();">
-                        <span class="icon ion-log-in"></span>
-                        Login
-                        <i class="icon ion-chevron-right icon-accessory"></i>
-                    </a>
-                </li>
                 <li>
-                    <a ng-if="appData.User !== null" class="item item-icon-left item-icon-right" href="#" nourl ng-click="openProfile();">
-                        <span class="icon ion-person"></span>
-                        {{appData.User.fullname}}
-                        <i class="icon ion-chevron-right icon-accessory"></i>
-                    </a>
-
-                </li>-->
-                <li>
-                    <a class="item item-icon-left item-icon-right active" nav-item menu-close href="#/"
+                    <a class="item item-icon-left item-icon-right active" nav-item menu-close href="#/index"
                        ui-sref-active="active">
-                        <span class="icon ion-grid"></span>
+                        <span class="icon ion-bag"></span>
                         Sales
                         <i class="icon ion-chevron-right icon-accessory"></i>
                     </a>
-                    <ul>
-                        <li>
-                            <a class="item item-icon-left item-icon-right" nav-item menu-close href="#/categories"
-                               ui-sref-active="active">
-                                <span class="icon ion-filing"></span>
-                                Categories
-                                <i class="icon ion-chevron-right icon-accessory"></i>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
                 <li>
                     <a class="item item-icon-left item-icon-right" nav-item menu-close href="#/shopping-list"
                        ui-sref-active="active">
-                        <span class="icon ion-ios7-bell"></span>
+                        <span class="icon ion-clipboard"></span>
                         Shopping List
+                        <i class="icon ion-chevron-right icon-accessory"></i>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="item item-icon-left item-icon-right" nav-item menu-close href="#/shops"
+                       ui-sref-active="active">
+                        <span class="icon ion-ios7-cart"></span>
+                        Shops
+                        <i class="icon ion-chevron-right icon-accessory"></i>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="item item-icon-left item-icon-right" nav-item menu-close href="#/categories"
+                       ui-sref-active="active">
+                        <span class="icon ion-ios7-albums"></span>
+                        Categories
                         <i class="icon ion-chevron-right icon-accessory"></i>
                     </a>
                 </li>
@@ -169,8 +162,19 @@
     </ion-side-menu>
 </ion-side-menus>
 
+<!--<tour step="currentStep">
+    <span tourtip="tip 1"> Highlighted </span>
+    <span tourtip="tip 2"> Elements </span>
+    <input tourtip="You can use it as an attribute on your element" />
+  <span tourtip="Full options"
+        tourtip-step="3"
+        tourtip-next-label="Next"
+        tourtip-placement="right"
+        tourtip-offset="60">Full options</span>
+</tour>-->
+
 <script type="text/ng-template" id="partials/deal-modal.tpl.html">
-    <div class="modal" id="DealModal" ng-controller="DealCtrl">
+    <div class="modal" id="DealModal" ng-controller="DealModalCtrl">
 
         <ion-pane class="slide-left-right-ios7">
             <ion-header-bar bindonce class="bar-calm">
@@ -203,7 +207,7 @@
                             bo-html="activeDeal.title + '<br/> - <span style=\'font-size: .7em\'>' + activeDeal.size + '</span>'"></h4>
                     </div>
                     <div class="col col-33 text-center">
-                        <span style="font-size: 1.8em" class="balanced" bo-text="(activeDeal.new_price | currency)" ></span>
+                        <span style="font-size: 1.8em" class="balanced" bo-text="(activeDeal.new_price|number:2|currency)" ></span>
                     </div>
 
                 </div>
@@ -222,7 +226,7 @@
                     <ion-slide-box show-pager="true" class="stable-bg">
                         <ion-slide>
                             <div class="image">
-                                <img bo-src="activeDeal.deal_images" alt="Image 1"/>
+                                <img bo-src="activeDeal.deal_images" alt="Image 1" height="200"/>
                             </div>
                         </ion-slide>
                     </ion-slide-box>

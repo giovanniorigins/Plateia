@@ -2,8 +2,8 @@ var test;
 var facebookUserID = "me"; //me = the user currently logged into Facebook
 
 angular.module('plateia.controllers', [])
-    .run(['$rootScope', 'AppData', 'Social', 'SearchEngine', '$timeout', 'myService', '$ionicModal', '$ionicActionSheet', '$ionicPopup', '$templateCache', '$state', '$ionicNavBarDelegate', '$ionicLoading', 'Deal',
-        function ($rootScope, AppData, Social, SearchEngine, $timeout, myService, $ionicModal, $ionicActionSheet, $ionicPopup, $templateCache, $state, $ionicNavBarDelegate, $ionicLoading, Deal) {
+    .run(['$rootScope', 'AppData', 'Social', 'SearchEngine', '$timeout', '$ionicModal', '$ionicActionSheet', '$ionicPopup', '$templateCache', '$state', '$ionicNavBarDelegate', '$ionicLoading', 'Deal','$route', 'tourConfig',
+        function ($rootScope, AppData, Social, SearchEngine, $timeout, $ionicModal, $ionicActionSheet, $ionicPopup, $templateCache, $state, $ionicNavBarDelegate, $ionicLoading, Deal, $route, tourConfig) {
             $rootScope.appData = AppData;
             $rootScope.ADarrays = AppData.Arrays;
             $rootScope.ADcounts = AppData.Counts;
@@ -29,11 +29,11 @@ angular.module('plateia.controllers', [])
             };
 
             // Loading
-            $rootScope.showLoading = function (backdrop, delay) {
+            $rootScope.showLoading = function (noBackdrop, delay) {
                 $rootScope.loading = $ionicLoading.show({
-                    content: '<i class="icon ion-loading-b" style="font-size:2em"></i><br>Loading',
-                    showBackdrop: backdrop || false,
-                    showDelay: delay || 0
+                    template    : '<i class="icon ion-loading-b" style="font-size:2em"></i><br>Loading',
+                    noBackdrop  : noBackdrop || true,
+                    delay       : delay || 0
                 });
             };
 
@@ -42,22 +42,34 @@ angular.module('plateia.controllers', [])
                     $ionicLoading.hide();
             };
 
+            tourConfig = {
+                placement        : 'top',                  // default placement relative to target. 'top', 'right', 'left', 'bottom'
+                animation        : false,                   // if tips fade in
+                nextLabel        : 'Next',                 // default text in the next tip button
+                scrollSpeed      : 500,                    // page scrolling speed in milliseconds
+                offset           : 28                      // how many pixels offset the tip is from the target
+            };
+            $rootScope.currentStep = /*intel.xdk.cache.getCookie('myTour') ||*/ 0;
+            /*$rootScope.postStepCallback = function() {
+                intel.xdk.cache.setCookie('myTour', $scope.currentStep,3000);
+            };*/
+
             // Cache Templates
             // Main Pages
-            $templateCache.get('partials/index.html'); // Home
-            $templateCache.get('partials/shops.html'); // Shops
-            $templateCache.get('partials/categories.html'); // Categories
-            $templateCache.get('partials/search.html'); // Search
-            $templateCache.get('partials/activity.html'); // Activity
-            //$templateCache.get('partials/shop_detail.html'); // Shop
-            $templateCache.get('partials/shop_details.html'); // Shop Details
-            $templateCache.get('partials/deal-phone.tpl.html'); // Deal
-            $templateCache.get('partials/deal-tablet.tpl.html'); // Deal
-            $templateCache.get('partials/deal-modal.tpl.html'); // Deal Modal
-            $templateCache.get('partials/category.html'); // Category
-            $templateCache.get('partials/invite.html'); // Invite
-            $templateCache.get('partials/settings.html'); // Settings
-            $templateCache.get('partials/help.html'); // Help
+//            $templateCache.get('partials/index.html'); // Home
+//            $templateCache.get('partials/shops.html'); // Shops
+//            $templateCache.get('partials/categories.html'); // Categories
+//            $templateCache.get('partials/search.html'); // Search
+//            $templateCache.get('partials/activity.html'); // Activity
+//            //$templateCache.get('partials/shop_detail.html'); // Shop
+//            $templateCache.get('partials/shop_details.html'); // Shop Details
+//            $templateCache.get('partials/deal-phone.tpl.html'); // Deal
+//            $templateCache.get('partials/deal-tablet.tpl.html'); // Deal
+//            $templateCache.get('partials/deal-modal.tpl.html'); // Deal Modal
+//            $templateCache.get('partials/category.html'); // Category
+//            $templateCache.get('partials/invite.html'); // Invite
+//            $templateCache.get('partials/settings.html'); // Settings
+//            $templateCache.get('partials/help.html'); // Help
 
             // Wrap all intel.xdk and cordova functions like $scope.$apply()
             $rootScope.safeApply = function (fn) {
@@ -145,15 +157,15 @@ angular.module('plateia.controllers', [])
             };
 
             // Select Deal
-            $rootScope.selectDeal = function (deal, issue, isRelated, toLoc) {
-                console.log(deal);
+            $rootScope.selectDeal = function (deal, issue, shop, isRelated, toLoc) {
                 issue = angular.isDefined(issue) ? issue : false;
+                shop = angular.isDefined(shop) ? shop : issue.shop_by_shop_id;
                 isRelated = angular.isDefined(isRelated) ? isRelated : false;
                 toLoc = angular.isDefined(toLoc) ? toLoc : false;
 
                 if ($('#DealModal').length === 0 || isRelated) {
                     $rootScope.activeDeal = deal;
-                    $rootScope.activeDeal.shop = issue.shop_by_shop_id;
+                    $rootScope.activeDeal.shop = shop;
                     $rootScope.activeDeal.sale_start = moment(issue.start_date).toDate();
                     $rootScope.activeDeal.sale_end = moment(issue.end_date).toDate();
 
@@ -253,12 +265,11 @@ angular.module('plateia.controllers', [])
                 }
             };
 
-            /* Object Share Modal Functions
-             ********************************/
+            /* Object Share Modal Functions */
             $rootScope.shareFacebook = function (deal) {
                 var strippedDescription = deal.description.replace(/(<([^>]+)>)/ig,"");
                 var objParameters = {
-                    "picture": deal.coupon_image,
+                    "picture": deal.deal_images,
                     "name": deal.title,
                     "caption": "http://marketplace.bs",
                     "description": strippedDescription,
@@ -270,7 +281,7 @@ angular.module('plateia.controllers', [])
             };
 
             $rootScope.shareTwitter = function (deal) {
-                Social.Tpost('Check this Out! ' + deal.url);
+                Social.Tpost('Check it Out! ' + deal.url);
             };
 
             $rootScope.shareLink = function (item) {
@@ -281,28 +292,23 @@ angular.module('plateia.controllers', [])
             };
 
             $rootScope.shareEmail = function (deal) {
-                intel.xdk.device.sendEmail(deal.title + '\n' + deal.description, "", deal.title, true, "", "");
+                intel.xdk.device.sendEmail(
+                    deal.title + '\n' + deal.description, //bodyText
+                    "", // Email Addresses to string
+                    'Check out this ' + deal.title + ', ' + deal.size + ' deal on sale at ' + deal.shop.title + '! <br/>I got it from <a href="http://agora.bs">Agora App</a>!', //subjectText
+                    true, //isHTML
+                    "", //ccString
+                    "" //bccString
+                );
             };
 
             $rootScope.shareText = function (deal) {
                 intel.xdk.device.sendSMS('Check dis\' Out! - ' + deal.url, '');
             };
 
+            /*** Object Share Modal Functions */
 
-            /* Banners */
-            $rootScope.homeBanners = [
-                {
-                    title: 'Slide 1',
-                    src: 'images/slides/slide_1.jpg'
-                },
-                {
-                    title: 'Slide 2',
-                    src: 'images/slides/slide_2.jpg'
-                }
-            ];
-
-            /* View Functions
-             ********************************/
+            /* View Functions */
             $rootScope.search = function (e) {
                 if (e.which == 13) {
                     //document.activeElement.blur();
@@ -340,10 +346,14 @@ angular.module('plateia.controllers', [])
                 return moment(date).fromNow();
             };
 
+            $rootScope.toDate = function (date) {
+                return moment(date).toDate();
+            };
+
             $rootScope.goTo = function (path, childId) {
                 switch (path) {
                 case 'categories':
-                    myService.getCategoryById(childId)
+                    Category.get(childId)
                         .then(function (data) {
                             $rootScope.activeCategory = data;
                             return $state.go('category', {
@@ -352,7 +362,7 @@ angular.module('plateia.controllers', [])
                         });
                     break;
                 case 'shops':
-                    myService.getShopById(childId)
+                    Shop.get(childId)
                         .then(function (data) {
                             $rootScope.activeShop = data;
                             return $state.go('shop', {
@@ -361,50 +371,10 @@ angular.module('plateia.controllers', [])
                         });
                     break;
                 default:
-                    ////console.log(path, ': ', childId);
                     return false;
 
                 }
             };
-
-
-            /* List Buttons */
-            $rootScope.dealOptions = [{
-                text: '',
-                type: 'button button-icon icon ion-share',
-                onTap: function (item) {
-                    $rootScope.openShare(item);
-                }
-            }, {
-                text: '',
-                type: 'button button-icon icon ion-location',
-                onTap: function (item) {
-                    $rootScope.selectDeal(item, false, true);
-                }
-            }];
-
-            $rootScope.shopOptions = [{
-                text: '',
-                type: 'button button-icon icon ion-star',
-                onTap: function (item) {
-                    $rootScope.favShop(item);
-                }
-            }, {
-                text: '',
-                type: 'button button-icon icon ion-location',
-                onTap: function (item) {
-                    $rootScope.selectShop(item, true);
-                }
-            }];
-            /*, {
-    text: '',
-    type: 'button button-icon icon icon ion-share',
-    onTap: function (item) {
-        $rootScope.openShare(item);
-    }
-            }*/
-
-
 
             $rootScope.openShare = function (item) {
                 // Show the action sheet
@@ -416,31 +386,32 @@ angular.module('plateia.controllers', [])
                         }, {
                         text: 'Email'
                         }, {
-                        text: 'Copy Link'
-                        }],
+                        text: 'Copy Text'
+                    }],
                     destructiveText: '',
                     titleText: 'Share',
                     cancelText: 'Cancel',
                     buttonClicked: function (index) {
                         switch (index) {
-                        case 0:
-                            $rootScope.shareFacebook(item);
-                            break;
-                        case 1:
-                            $rootScope.shareText(item);
-                            break;
-                        case 2:
-                            $rootScope.shareEmail(item);
-                            break;
-                        case 3:
-                            $rootScope.shareLink(item);
-                            break;
-
+                            case 0:
+                                $rootScope.shareFacebook(item);
+                                break;
+                            case 1:
+                                $rootScope.shareText(item);
+                                break;
+                            case 2:
+                                $rootScope.shareEmail(item);
+                                break;
+                            case 3:
+                                intel.xdk.device.copyToClipboard("code to copy");
+                                break;
                         }
                         return true;
                     }
                 });
             };
+
+            /*** View Functions */
 
             /* Modal Functions */
             $rootScope.closeModal = function () {
@@ -455,14 +426,6 @@ angular.module('plateia.controllers', [])
                 $rootScope.modal.remove();
             });
 
-            /* Login Functions
-             ********************************/
-            if (angular.isDefined(intel.xdk.cache.getCookie('User_Login'))) {
-                var a = JSON.parse(intel.xdk.cache.getCookie('User_Login'));
-                angular.extend($rootScope.loginData, a);
-                myService.processLogin(true);
-            }
-
             $rootScope.$on('$stateNotFound',
                 function (event, unfoundState, fromState, fromParams) {
                     ////console.log(unfoundState.to); // "lazy.state"
@@ -475,15 +438,14 @@ angular.module('plateia.controllers', [])
             }
         }
     ])
-    .controller('BodyCtrl', ['$scope', 'AppData', 'myService', '$ionicSideMenuDelegate', '$ionicModal', '$timeout', '$ionicFrostedDelegate', '$state',
-        function ($scope, AppData, myService, $ionicSideMenuDelegate, $ionicModal, $timeout, $ionicFrostedDelegate, $state) {
+    .controller('BodyCtrl', ['$scope', 'AppData', '$ionicSideMenuDelegate', '$ionicModal', '$timeout', '$state',
+        function ($scope, AppData, $ionicSideMenuDelegate, $ionicModal, $timeout, $state) {
             $scope.ADappState = AppData.AppState;
             $scope.list = [];
             $scope.openLeft = function () {
                 $ionicSideMenuDelegate.toggleLeft();
             };
             $ionicSideMenuDelegate.canDragContent(true);
-            $ionicFrostedDelegate.update();
 
             $scope.closeWelcome = function () {
                 intel.xdk.cache.setCookie('Welcomed', 'true', '-1');
@@ -608,45 +570,8 @@ angular.module('plateia.controllers', [])
                 });
             };
 
-            $scope.siteLogin = function () {
-
-                var promise = myService.checkStatus($scope.loginData);
-                promise.then(function (success) {
-                    myService.processLogin(false)
-                        .then(function (success) {
-                            //console.log('Successful Login');
-                        });
-                }, function (failure) {
-                    if (angular.isDefined(intel.xdk.cache.getCookie('User_Login'))) {
-                        var userCreds = JSON.parse(intel.xdk.cache.getCookie('User_Login'));
-                        $scope.loginData.username = userCreds.username;
-                        $scope.loginData.password = userCreds.password;
-                        myService.processLogin(false)
-                            .then(function (success) {
-                                //console.log(success);
-                            }, function (failure) {
-                                //console.log(failure);
-                                $scope.openLogin();
-
-                            });
-                    } else if ($scope.loginData.username === '' || $scope.loginData.password === '') {
-                        $scope.openLogin();
-                    }
-                });
-
-            };
-
-            $scope.autoLogin = function () {
-                //console.log((intel.xdk.cache.getCookie('User_Login')));
-                var promise = myService.processLogin();
-                promise.then(function (success) {
-                    alert('Success: ' + success);
-                }, function (failure) {
-                    alert('Failed: ' + failure);
-                    deferred.reject(failure);
-                });
-            };
-
+            $scope.siteLogin = function () {};
+            $scope.autoLogin = function () {};
             $scope.startloginKeydown = function (e) {
                 if (e.which == 13 || e.keyCode == 13) {
                     $scope.hide();
@@ -655,24 +580,9 @@ angular.module('plateia.controllers', [])
                 }
             };
 
-            $scope.startLogin = function () {
-                //console.log('User: ', $scope.loginData);
-                myService.processLogin(false)
-                    .then(function (data) {
-                        //console.log('success', data);
-                        $scope.closeModal();
-                    });
-            };
+            $scope.startLogin = function () {};
 
-
-            $scope.accountLogout = function () {
-                var promise = myService.userLogout();
-                promise.then(function (success) {
-                    //console.log(success);
-                }, function (error) {
-                    //console.log(error);
-                });
-            };
+            $scope.accountLogout = function () {};
 
             //Attempt Login
             /*if (angular.isDefined(intel.xdk.cache.getCookie('User_Login')))
@@ -710,26 +620,63 @@ angular.module('plateia.controllers', [])
                 debugger;
             });*/
 
+            // Set Deals Sort - DEFAULT: 'issues'
+            $scope.sortOptions = ['shops','deals'];
+            $scope.viewSortStatus = false;
+
+            $scope.viewSortToggle = function (){
+                $scope.viewSortStatus = !$scope.viewSortStatus;
+            };
+
+            var mySort = angular.isDefined(intel.xdk.cache.getCookie('Home_Sort'))
+                ? JSON.parse(intel.xdk.cache.getCookie('Home_Sort')).toString()
+                : 'shops';
+            $scope.currentSort = mySort;
+
+            $scope.changeSort = function(type) {
+                $scope.currentSort = type;
+                $scope.viewSortToggle();
+            };
+
         }
     ])
     .controller('HomeCtrl', ['$scope', '$q', 'Deal', 'Issue', '$state', '$timeout', 'Device',
         function ($scope, $q, Deal, Issue, $state, $timeout, Device) {
             $scope.ADappState.currentName = 'Sales';
             $scope.ADappState.currentApp = 'home';
-            $scope.Issues = {record:[]};
 
+            $scope.Issues = {record:[]};
+            $scope.Deals = {record:[]};
+
+            $scope.viewSortToggle = function (){
+                $scope.$parent.viewSortToggle();
+            };
+
+            // Set Shops to watch - DEFAULT: '' / All Shops
             var myShops = angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))
                 ? JSON.parse(intel.xdk.cache.getCookie('Faved_shops')).toString()
                 : '';
+
             $scope.Issues.record.length = 0;
             Issue.get({ids:myShops}, function(data){
                 $scope.Issues = data;
-                $scope.$broadcast('scroll.refreshComplete');
             }, function(data){
                 if (angular.isDefined(data.data.error[0].message)) {
                     angular.forEach(data.data.error[0].context.record, function (value, key) {
                         if (!angular.isString(value)){
                             $scope.Issues.record.push(value);
+                        }
+                    });
+                }
+            });
+
+            Deal.get({ids:myShops}, function(data){
+                $scope.Deals = data;
+            }, function(data){
+                if (angular.isDefined(data.data.error[0].message)) {
+                    angular.forEach(data.data.error[0].context.record, function (value, key) {
+                        if (!angular.isString(value)){
+                            $scope.Deals.record.push(value);
                         }
                     });
                 }
@@ -753,6 +700,21 @@ angular.module('plateia.controllers', [])
                     }
                     $scope.$broadcast('scroll.refreshComplete');
                 });
+
+                $scope.Deals.record.length = 0;
+                Deal.refresh({ids:myShops}, function(data){
+                    $scope.Deals = data;
+                    $scope.$broadcast('scroll.refreshComplete');
+                }, function(data){
+                    if (angular.isDefined(data.data.error[0].message)) {
+                        angular.forEach(data.data.error[0].context.record, function (value, key) {
+                            if (!angular.isString(value)){
+                                $scope.Deals.record.push(value);
+                            }
+                        });
+                    }
+                    $scope.$broadcast('scroll.refreshComplete');
+                });
                 return true;
             };
 
@@ -767,11 +729,6 @@ angular.module('plateia.controllers', [])
             });
 
             $scope.hideLoading();
-
-            $scope.toggleSearchbar = function (event) {
-                //debugger;
-                ////console.log(test = event);
-            };
 
             // Show and Hide search bar on scroll
             /*var sb1 = ionic.onGesture('dragup', function (event) {
@@ -824,42 +781,39 @@ angular.module('plateia.controllers', [])
                         break;
                 }
                 return a;
+            };
+
+            $scope.viewType = 'list';
+            if ($scope.ADappState.Type === 'isTablet'){
+                // Handle List/Grid Layout Toggles
+
+                if (angular.isDefined(intel.xdk.cache.getCookie('Home_ViewType'))) {
+                    $scope.viewType = intel.xdk.cache.getCookie('Home_ViewType');
+                } else {
+                    $scope.viewType = 'list';
+                    intel.xdk.cache.setCookie('Home_ViewType', $scope.viewType, '-1');
+                }
             }
+            $scope.viewTypeToggle = function() {
+                if ($scope.viewType == 'list') {
+                    $scope.viewType = 'grid';
+                } else if ($scope.viewType == 'grid') {
+                    $scope.viewType = 'list';
+                }
+
+                if (angular.isDefined(intel.xdk.cache.getCookie('Home_ViewType'))) {
+                    intel.xdk.cache.setCookie('Home_ViewType', type, '-1');
+                } else {
+                    intel.xdk.cache.setCookie('Home_ViewType', type, '-1');
+                }
+            };
+
+
 
         }
     ])
-    /*.controller('SalesCtrl', ['$scope', '$q', 'myService', '$state', '$timeout', 'Device',
-        function ($scope, $q, myService, $state, $timeout, Device) {
-
-            $scope.getColItemWidth = function (deal) {
-
-                switch($scope.ADappState.Orientation){
-                    case 'portrait':
-                        return '50%';
-                        break;
-                    case 'landscape':
-                        return '33%';
-                        break;
-                }
-            }
-
-            $scope.getColItemHeight = function (deal, pObj) {
-                $scope.parentWidth = $scope.parentWidth || $(pObj).width();
-                switch($scope.ADappState.Orientation){
-                    case 'portrait':
-                        return '50%';
-                        break;
-                    case 'landscape':
-                        if()
-                        return 359;
-                        break;
-                }
-            }
-
-        }
-    ])*/
-    .controller('DealCtrl', ['$scope', '$timeout', 'myService', 'Geolocation', '$ionicLoading',
-        function ($scope, $timeout, myService, Geolocation, $ionicLoading) {
+    .controller('DealModalCtrl', ['$scope', '$timeout', 'Geolocation', '$ionicLoading',
+        function ($scope, $timeout, Geolocation, $ionicLoading) {
             $scope.state = 'main';
 
             $scope.toggleState = function (state) {
@@ -902,7 +856,71 @@ angular.module('plateia.controllers', [])
             };
         }
     ])
+    .controller('ShoppingListCtrl', ['$scope', 'Deal', '$ionicPopup', '$filter',
+        function($scope, Deal, $ionicPopup, $filter){
+            $scope.ADappState.currentName = 'Shopping List';
+            $scope.ADappState.currentApp = 'shopping';
+
+            $scope.ShoppingList = {record:[]};
+            if (angular.isDefined(intel.xdk.cache.getCookie('Shopping_list'))) {
+                var myDeals = angular.isDefined(intel.xdk.cache.getCookie('Shopping_list'))
+                    ? JSON.parse(intel.xdk.cache.getCookie('Shopping_list')).toString()
+                    : '';
+                Deal.get({ids:myDeals}, function(data){
+                    $scope.ShoppingList = data;
+                }, function(data){
+                    if (angular.isDefined(data.data.error[0].message)) {
+                        angular.forEach(data.data.error[0].context.record, function (value, key) {
+                            if (!angular.isString(value)){
+                                $scope.ShoppingList.record.push(value);
+                            }
+                        });
+                    }
+                });
+
+
+            } else {
+                // Do Popup CTA and go to sales
+            }
+
+            $scope.doRefresh = function () {
+                myDeals = angular.isDefined(intel.xdk.cache.getCookie('Shopping_list'))
+                    ? JSON.parse(intel.xdk.cache.getCookie('Shopping_list')).toString()
+                    : '';
+                $scope.ShoppingList.record.length = 0;
+                Deal.refresh({ids:myDeals}, function(data){
+                    $scope.ShoppingList = data;
+                    $scope.$broadcast('scroll.refreshComplete');
+                }, function(data){
+                    if (angular.isDefined(data.data.error[0].message)) {
+                        angular.forEach(data.data.error[0].context.record, function (value, key) {
+                            if (!angular.isString(value)){
+                                $scope.ShoppingList.record.push(value);
+                            }
+                        });
+                    }
+                    $scope.$broadcast('scroll.refreshComplete');
+                });
+                return true;
+            };
+
+            $scope.toCartConfirm = function(deal, index){
+                $scope.toCart(deal);
+                return $scope.ShoppingList.record.splice(index + 1,1);
+            };
+
+            $scope.endDateSort = function(a) {
+                return $scope.toDate(a.issues_by_issue_id.end_date);
+            }
+
+        }
+    ])
     .controller('ShopsCtrl', ['$scope', 'Shop', '$q', '$ionicModal', '$ionicPopup', 'Request',
+        function ($scope, Shop, $q, $ionicModal, $ionicPopup, Request) {
+
+        }
+    ])
+    .controller('ShopsSettingsCtrl', ['$scope', 'Shop', '$q', '$ionicModal', '$ionicPopup', 'Request',
         function ($scope, Shop, $q, $ionicModal, $ionicPopup, Request) {
             $scope.ADappState.currentName = 'Stores';
             $scope.ADappState.currentApp = 'stores';
@@ -981,7 +999,7 @@ angular.module('plateia.controllers', [])
             defer.resolve();
         }
     ])
-    .controller('MapCtrl', ['$scope', 'Geolocation', '$timeout', 'AppData',
+    /*.controller('MapCtrl', ['$scope', 'Geolocation', '$timeout', 'AppData',
         function ($scope, Geolocation, $timeout, AppData) {
             // For Shops ONLY!
             $scope.activeShop = AppData.ActiveShop;
@@ -1113,9 +1131,9 @@ angular.module('plateia.controllers', [])
                     });
 
         }
-    ])
-    .controller('ShopCtrl', ['$scope', 'myService', '$q',
-        function ($scope, myService, $q) {
+    ])*/
+    .controller('ShopCtrl', ['$scope', '$q', 'Shop',
+        function ($scope, $q, Shop) {
             $scope.ADappState.currentApp = 'shop';
             $scope.ADappState.currentName = $scope.activeShop.title;
 
@@ -1130,13 +1148,15 @@ angular.module('plateia.controllers', [])
 
                     $scope.busy = true;
                     var cache = $scope.start === 0 ? false : true;
-                    myService.getShopById($scope.activeShop.id, 'limit=' + $scope.limit + '&start=' + $scope.start, cache)
+                    Shop.get({id:$scope.activeShop.id}, function(data){
+	                    angular.forEach(data.deals, function (index) {
+		                    $scope.deals.push(index);
+	                    });
+	                    $scope.lastRefreshed = moment().toISOString();
+	                    deferred.resolve(data.deals);
+                    })
                         .then(function (data) {
-                            angular.forEach(data.deals, function (index) {
-                                $scope.deals.push(index);
-                            });
-                            $scope.lastRefreshed = moment().toISOString();
-                            deferred.resolve(data.deals);
+
                         }).then(function (data) {
                             $scope.start += $scope.limit;
                             $scope.busy = false;
@@ -1166,7 +1186,7 @@ angular.module('plateia.controllers', [])
             });
 
             // Load Items
-            myService.getShopById($scope.activeShop.id)
+            Shop.get({id:$scope.activeShop.id})
                 .then(function (success) {
                     $scope.deals = success.deals;
                 }, function (error) {});
@@ -1187,55 +1207,30 @@ angular.module('plateia.controllers', [])
             $scope.ADappState.currentName = 'Categories';
             $scope.ADappState.currentApp = 'categories';
 
-            $scope.onReload = function () {
-                $scope.lastRefreshed = moment().toISOString();
-                var promise = Category.get();
-                return promise;
+            $scope.Categories = Category.get();
+
+            $scope.doRefresh = function () {
+                $scope.Categories = Category.refresh(function(){
+                    $scope.$broadcast('scroll.refreshComplete');
+                });
             };
 
             $scope.hideLoading();
 
         }
     ])
-    .controller('CategoryCtrl', ['$scope', '$q', 'myService',
-        function ($scope, $q, myService) {
+    .controller('CategoryCtrl', ['$scope', '$q', 'Category', 'Deal',
+        function ($scope, $q, Category, Deal) {
             //console.log('here');
             $scope.ADappState.currentApp = 'categories';
             $scope.ADappState.currentName = $scope.activeCategory.title;
 
-            $scope.limit = 50;
-            $scope.start = 0;
-            $scope.busy = false;
+            $scope.Deals = Category.get({id:$scope.activeCategory.id});
 
-            $scope.loadMore = function () {
-                var deferred = $q.defer();
-
-                $scope.busy = true;
-                var cache = $scope.start === 0 ? false : true;
-                myService.getDealsByCategoryId($scope.activeCategory.id, 'limit=' + $scope.limit + '&start=' + $scope.start, cache)
-                    .then(function (data) {
-                        angular.forEach(data.coupons, function (index) {
-                            $scope.deals.push(index);
-                        });
-                        $scope.lastRefreshed = moment().toISOString();
-                        deferred.resolve(data);
-                    }).then(function (data) {
-                        $scope.start += $scope.limit;
-                        $scope.busy = false;
-                        $scope.$broadcast('scroll.refreshComplete');
-                        $scope.$broadcast('scroll.infiniteScrollComplete');
-                    });
-
-                return deferred.promise;
-            };
-
-            $scope.onReload = function () {
-                $scope.limit = 10;
-                $scope.start = 0;
-
-                $scope.deals.length = 0;
-                var promise = $scope.loadMore();
-                return promise;
+            $scope.doRefresh = function () {
+                $scope.Deals = Category.get({id:$scope.activeCategory.id},function(){
+                    $scope.$broadcast('scroll.refreshComplete');
+                });
             };
 
             $scope.$on('doRefresh', function (e) {
@@ -1274,8 +1269,8 @@ angular.module('plateia.controllers', [])
 
         }
     ])
-    .controller('SearchCtrl', ['$scope', '$timeout', 'myService',
-        function ($scope, $timeout, myService) {
+    .controller('SearchCtrl', ['$scope', '$timeout',
+        function ($scope, $timeout) {
             $scope.searching = function () {
 
             };
@@ -1290,8 +1285,8 @@ angular.module('plateia.controllers', [])
 
         }
     ])
-    .controller('SettingsCtrl', ['$scope', '$timeout', 'myService', 'PN', '$http', '$ionicPopup',
-        function ($scope, $timeout, myService, PN, $http, $ionicPopup) {
+    .controller('SettingsCtrl', ['$scope', '$timeout', 'PN', '$http', '$ionicPopup',
+        function ($scope, $timeout, PN, $http, $ionicPopup) {
             $scope.ADappState.currentName = 'Settings';
             $scope.ADappState.currentApp = 'settings';
             //console.log($scope.ADappState.AllowPush);
@@ -1329,8 +1324,37 @@ angular.module('plateia.controllers', [])
 
         }
     ])
-    .controller('WelcomeCtrl', ['$scope', '$timeout', 'myService', '$state', '$ionicSideMenuDelegate',
-        function ($scope, $timeout, myService, $state, $ionicSideMenuDelegate) {
+    .controller('WelcomeCtrl', ['$scope', '$timeout', '$state', '$ionicSideMenuDelegate', 'Shop',
+        function ($scope, $timeout, $state, $ionicSideMenuDelegate, Shop) {
+            $scope.ADappState.currentName = '';
+            $scope.ADappState.currentApp = 'intro';
+
+            var myShops = angular.isDefined(intel.xdk.cache.getCookie('Faved_shops'))
+                ? JSON.parse(intel.xdk.cache.getCookie('Faved_shops')).toString()
+                : '';
+            $scope.checkSelected = function (shop){
+                return shop.checked = myShops.indexOf(shop.id) != -1
+            };
+
+            $scope.Shops = {record:[]};
+            Shop.get(function(data){
+                $scope.Shops = data;
+
+                angular.forEach($scope.Shops.record, function(v){
+                    v.checked = myShops.indexOf(v.id) != -1;
+                });
+
+                $scope.$broadcast('scroll.refreshComplete');
+            }, function(data){
+                $scope.$broadcast('scroll.refreshComplete');
+                alert('Check Internet Connection.')
+            });
+
+            $scope.setShops = function () {
+                debugger;
+            };
+
+
             $scope.login = function () {
                 $scope.openLogin();
             };
@@ -1350,18 +1374,18 @@ angular.module('plateia.controllers', [])
             });
         }
     ])
-    .controller('RegistrationCtrl', ['$scope', 'myService', '$http',
-        function ($scope, myService, $http) {
+    .controller('RegistrationCtrl', ['$scope', '$http',
+        function ($scope, $http) {
 
             $scope.registerData = {};
             $scope.siteRegistration = function () {
-                var promise = myService.userRegistration($scope.registerData);
+                /*var promise = {};//myService.userRegistration($scope.registerData);
                 promise.then(function (success) {
                     $scope.closeModal();
                     $scope.closeWelcome();
                 }, function (failure) {
                     $scope.failures = failure;
-                });
+                });*/
             };
         }
     ]);

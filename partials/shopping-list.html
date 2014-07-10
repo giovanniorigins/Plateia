@@ -1,24 +1,32 @@
 <ion-view title="{{ADappState.currentName}}">
 
-    <ion-content class="has-header has-subheader" ng-controller="ShoppingListCtrl" bindonce="">
+    <ion-content class="has-header" ng-controller="ShoppingListCtrl" bindonce="">
+        <ion-refresher on-pulling="updated = lastUpdated(lastRefreshed)"
+                       pulling-text="Pull down to refresh<br><small>{{updated}}</small>"
+                       refreshing-text="Refreshing" refreshing-icon="ion-refreshing"
+                       on-refresh="doRefresh()"></ion-refresher>
 
-        <ion-list animation="slide-left" can-swipe="true" option-buttons="dealOptions" item-type="item">
-            <form name="subSearch" class="item item-input-inset search-bar am-fade-and-slide-bottom" search-bar>
-                <label class="item-input-wrapper">
-                    <i class="icon ion-ios7-search placeholder-icon"></i>
-                    <input type="search" placeholder="Search" ng-model="searchData.search" ng-keyup="search($event)">
-                    <i class="icon ion-close-circled placeholder-icon" ng-show="searchData.search.length > 0" ng-click="searchData.search = ''" style="font-size:30px;"></i>
-                </label>
-                <button type="submit" class="button button-clear hide">
-                    Search
-                </button>
-            </form>
-            <ion-item item="deal" class="item-thumbnail-left" ng-repeat="deal in searchData.results" bindonce="searchData.results" ng-click="selectDeal(deal);" ng-href="#" nourl>
-                <img bo-src="deal.coupon_image">
-                <h2 bo-html="deal.title+'<br/><h3>from '+deal.shop_title+'</h3>'"></h2>
-                <p bo-text="(deal.discount_amount|number:0)+'% Off'"></p>
-                <p bo-text="'Ends '+(toExpire(deal.expire_date))"></p>
+        <ion-list class="deals-list" bindonce="">
+
+            <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="deal in ShoppingList.record | orderBy: endDateSort"
+                      bindonce="ShoppingList" ng-click="selectDeal(deal, deal.issues_by_issue_id, deal.shop_by_shop_id)" ng-init="endDate = toDate(deal.issues_by_issue_id.end_date)">
+                <img bo-if="deal.deal_images == '' || deal.deal_images === null" bo-src="deal.shop_by_shop_id.shop_image">
+                <img bo-if="deal.deal_images.length != 0 && deal.deal_images != null" bo-src="deal.deal_images">
+                <h3 bo-text="deal.title"></h3>
+                <span style="font-size: .75em" bo-if="deal.deal_images.length != 0 && deal.deal_images != null" bo-html="'at ' + deal.shop_by_shop_id.title +'<br/>'"></span>
+                <strong class="balanced" bo-text="deal.new_price|number:2|currency"></strong>
+                <span bo-html="', '+deal.size"></span>
+                <p bo-text="'Valid ' + (toDate(deal.issues_by_issue_id.start_date) | date:'d/M') + ' - ' + (toDate(deal.issues_by_issue_id.end_date) | date:'d/M')"></p>
+
+                <i class="icon ion-chevron-right icon-accessory"></i>
+
+                <ion-option-button class="button-clear" ng-click='openShare(deal)'><i class="icon ion-share"></i></ion-option-button>
+                <ion-option-button class="button-clear" ng-click="toCartConfirm(deal)">
+                    <i ng-if="inCart(deal) == false" class="icon ion-ios7-cart positive"></i>
+                    <i ng-if="inCart(deal) == true" class="icon ion-checkmark-round balanced"></i>
+                </ion-option-button>
             </ion-item>
+
         </ion-list>
 
     </ion-content>
