@@ -1,0 +1,37 @@
+<div ng-controller="IndexController">
+  <super-navbar>
+    <super-navbar-title>
+      Categories
+    </super-navbar-title>
+  </super-navbar>
+
+  <div ng-show="showSpinner" ng-include="'_spinner.html'"></div>
+  <div ng-hide="showSpinner">
+    <ul class="list" ng-hide="categorys.length == 0">
+
+        <super-navigate class="item item-icon-right" location="category#show?id={{ category.id }}"
+                        ng-repeat="cat in categorys track by cat.id | orderBy:deals.length">
+            <h2 ng-bind="cat.title"></h2>
+            <span class="badge badge-balanced" ng-bind="cat.deals.length"></span>
+        </super-navigate>
+
+      <<!--super-navigate location="category#show" data-params-id="{{ category.id }}" ng-repeat="category in categorys">
+        <li class="item item-icon-right">
+          <span ng-bind="category['id']"></span>
+          <i class="icon super-ios7-arrow-right"></i>
+        </li>
+      </super-navigate>-->
+
+    </ul>
+
+    <!--<h4 ng-show="categorys.length == 0" class="assertive padding">
+      No categorys found. Create one?
+    </h4>
+
+    <super-modal-show location="category#new">
+      <button class="button button-full button-positive">
+        Create a new category
+      </button>
+    </super-modal-show>-->
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div ng-controller="ModalmapController">
+    <super-navbar class="green-bar">
+        <super-navigate-back>Back</super-navigate-back>
+        <super-navbar-title>Store Locations</super-navbar-title>
+        <super-navbar-button side="right" ng-click="closeModal()">
+            Close
+        </super-navbar-button>
+        <!--<super-navbar-button class="button button-icon icon super-chevron-left" ng-click="closeModal()">
+            Back
+        </super-navbar-button>-->
+    </super-navbar>
+    <div class="content">
+        <img style="width: 100%;height: auto;" ng-src="{{'https://maps.googleapis.com/maps/api/staticmap?size='+viewWidth+'x'+viewHeight+'&key=AIzaSyAs7HCpE8cEycFiQo4OEDNHxJMM92qtgEM&maptype=roadmap' + markerString}}" alt=""/>
+    </div>
+    <hr class="thin"/>
+    <ul class="list">
+        <li class="item item-icon-left" ng-repeat="loc in locations">
+            <span class="icon super-arrow-right-b"></span>
+            <h2><strong class="assertive">{{loc.alpha}}</strong> &rightarrow; {{loc.name}}</h2>
+            {{loc.address}}
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agora</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <!-- Styles -->
+    <link rel="stylesheet" href="/components/supersonic/css/supersonic.css">
+    <link rel="stylesheet" href="/stylesheets/ionic.min.css">
+    <link rel="stylesheet" href="/stylesheets/application.css">
+    <link rel="import" href="/components/supersonic/components/import.html">
+
+    <!-- Framework Scripts -->
+    <script src="/components/angular/angular.js"></script>
+    <script src="http://localhost/cordova.js"></script>
+    <script src="/scripts/MapKit.js"></script>
+    <script src="/components/steroids-js/steroids.js"></script>
+    <script src="/components/supersonic/supersonic.js"></script>
+    <script src="/components/webcomponentsjs/webcomponents.js"></script>
+    <script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAs7HCpE8cEycFiQo4OEDNHxJMM92qtgEM&sensor=false">
+</script>
+
+    <!-- App Scripts-->
+    <script src="/js/filters.js"></script>
+    <script src="/js/directives.js"></script>
+    <% _.each(yield.modules, function(module) { %>
+    <script src="/app/<%= module %>.js"></script>
+    <% }); %>
+    <script>
+            supersonic.device.ready.then(function () {
+                supersonic.logger.log('Device Ready');
+                window.analytics.startTrackerWithId('UA-27155404-12');
+                if (!!localStorage.user_id) {
+                    window.analytics.setUserId(JSON.parse(localStorage.user_id));
+                }
+
+                var haveNetwork = (navigator.connection.type != Connection.NONE);
+
+                document.addEventListener("online", onOnline, false);
+                document.addEventListener("offline", onOffline, false);
+
+                function onOnline() {
+                    // Handle the online event
+                    supersonic.logger.log('App Online');
+                    haveNetwork = true;
+                }
+
+                function onOffline() {
+                    // Handle the offline event
+                    supersonic.logger.log('App Offline');
+                    haveNetwork = false;
+                }
+
+                angular.bootstrap(document.getElementsByTagName('body'), ['<%= yield.moduleName %>']);
+
+                // Facebook
+                // Check whether Cordova plugin is enabled
+                if (typeof FB !== 'undefined' && typeof CDV !== 'undefined') {
+                    // Initialize Facebook Javascript SDK with Cordova interface
+                    FB.init({
+                        appId: 237722189734886,
+                        nativeInterface: CDV.FB
+                    });
+
+                    FB.login(function(login) {
+                        // Check if login was successful
+                        if (login.authResponse) {
+                            FB.api('/me', 'get', {
+                                fields: 'first_name'
+                            }, function(user) {
+                                // Check if API request was successful
+                                if (user && !user.error) {
+                                    navigator.alert('Hello, ' + user.first_name + '!');
+                                }
+                            });
+                        }
+                    },{
+                        // Make sure we don't request extra access rights
+                        scope: ''
+                    });
+                }
+            });
+    </script>
+    <script src="http://debug-software.intel.com/target/target-script-min.js#WEGP4lWuiiRlnH7KOISz_wDOJugBYBBnZ_zc8YkyjOY"></script>
+</head>
+<body class="content" ng-controller="BodyController">
+
+<%= yield.view %>
+
+</body>
+</html>

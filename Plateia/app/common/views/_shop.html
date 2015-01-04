@@ -1,0 +1,27 @@
+<div class="row row-wrap block-list">
+    <div class="shop-item col" ng-repeat="shop in shops"
+         ng-class="{'portrait':'col-33', 'landscape':'col-25'}[ADappState.Orientation]">
+
+        <div class="list card">
+            <super-modal-show location="shop#modal?id={{ shop.id }}" class="item item-image">
+                <img ng-src="{{shop.photos[0].path}}">
+            </super-modal-show>
+
+            <div class="item tabs tabs-secondary tabs-icon-top">
+                <button class="tab-item button-icon" ng-click="selectedShop(shop.id)">
+                    <span ng-if="faved(shop.id)==false">
+                        <i class="icon super-ios7-eye-outline"></i> Watch
+                    </span>
+                    <span ng-if="faved(shop.id)==true">
+                        <i class="icon super-ios7-eye balanced"></i> Watching
+                    </span>
+                </button>
+                <super-modal-show ng-if="shop.locations.length" location="deal#modalmap" data-params-locations="{{ shop.locations }}"
+                                  class="tab-item">
+                    <i class="icon super-map"></i> Locations
+                </super-modal-show>
+            </div>
+        </div>
+
+    </div>
+</div>

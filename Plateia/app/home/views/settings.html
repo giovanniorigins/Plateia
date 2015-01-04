@@ -1,0 +1,49 @@
+<super-navbar>
+    <super-navbar-title>Settings</super-navbar-title>
+</super-navbar>
+
+<div class="" ng-controller="SettingsController">
+    <ul class="list">
+
+        <super-navigate location="#/intro" class="item">
+            Show Tutorial
+        </super-navigate>
+
+        <super-navigate class="item item-icon-right" location="home#mystores" view-id="settings-stores">
+            Select Stores
+            <i class="icon super-chevron-right icon-accessory"></i>
+        </super-navigate>
+
+        <!--<ion-toggle ng-model="toggles.enablePush" ng-change="toggle('push')">
+            Push Notifications
+        </ion-toggle>-->
+
+        <!--<ion-toggle ng-model="toggles.enableGeo" ng-change="toggle('geo')">
+            Geolocation Services
+        </ion-toggle>-->
+
+        <super-navigate class="item item-icon-right" location="home#TOS">
+            Terms of Service
+            <i class="icon super-chevron-right icon-accessory"></i>
+        </super-navigate>
+        <super-navigate class="item item-icon-right" location="home#privacy">
+            Privacy Policy
+            <i class="icon super-chevron-right icon-accessory"></i>
+        </super-navigate>
+
+        <super-navigate class="item hide" location="javascript:;" ng-click="">
+            Invite Friends
+        </super-navigate>
+
+        <super-navigate class="item" location="javascript:;" ng-click="">
+            Rate/Review this app
+        </super-navigate>
+
+        <super-navigate class="item" location="javascript:;" ng-click="">
+            FAQ
+        </super-navigate>
+
+        <a class="item" href="#" ng-click="RequestPrompt()">Request A Store</a>
+
+    </ul>
+</div>

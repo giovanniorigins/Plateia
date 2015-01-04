@@ -1,7 +1,13 @@
 {
   "project": {
-    "projectSettingsVersion": "1.0",
+    "projectSettingsVersion": "1.1",
     "projectFiles": {},
-    "projectDirectories": {}
+    "projectDirectories": {},
+    "initialAutoPluginCount": 0,
+    "currentService": {
+      "methodapi": "trackPageView",
+      "endPoint": "Tracking",
+      "service": "google_analytics"
+    }
   }
 }

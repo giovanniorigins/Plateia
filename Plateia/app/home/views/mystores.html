@@ -1,0 +1,17 @@
+<super-navbar>
+    <super-navbar-title>My Stores</super-navbar-title>
+    <super-navbar-button side="right" ng-click="RequestPrompt()">Request Store</super-navbar-button>
+</super-navbar>
+
+<div ng-controller="MystoresController">
+    <div class="list" ng-hide="shops.length == 0">
+        <a id="{{'shop-' +  shop.id }}" class="item item-avatar-left item-checkbox item-checkbox-right" href="#"
+            ng-repeat="shop in shops" ng-init="checkSelected(shop)">
+            <img ng-src="{{ shop.photos[0].path }}" />
+            {{ shop.title }}
+            <label class="checkbox" for="{{'checkbox_' + $index}}">
+                <input id="{{'checkbox_' + $index}}" class="shop-checkbox" type="checkbox" ng-model="shop.checked" ng-change="selectedShop(shop)" >
+            </label>
+        </a>
+    </div>
+</div>

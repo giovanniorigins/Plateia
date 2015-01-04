@@ -1,0 +1,120 @@
+<div ng-controller="ModalController">
+    <super-navbar class="purple-bar">
+        <super-navbar-button ng-click="closeModal()">
+            Back
+        </super-navbar-button><!--<super-navbar-button class="button button-icon icon super-chevron-left" ng-click="closeModal()">
+            Back
+        </super-navbar-button>-->
+        <super-navbar-title ng-bind="coupon.title"></super-navbar-title>
+        <super-navbar-button id="share_button" side="right" ng-click="share(coupon)">Share</super-navbar-button>
+        <!--<super-navbar-button side="right" class="button button-icon icon super-share"
+                             ng-click="share(coupon)"></super-navbar-button>-->
+    </super-navbar>
+
+    <!--<pre class="">
+        coupon:{{coupon|json}}
+    </pre>-->
+    <div ng-show="showSpinner" ng-include="'_spinner.html'"></div>
+    <div ng-hide="showSpinner">
+
+
+        <div class="content">
+
+            <div class="stable-bg calm">
+                <div class="list">
+                    <div class="item item-avatar">
+                        <img ng-src="{{coupon.shop.photos[0].path}}">
+
+                        <p>
+                            <span ng-bind="coupon.shop.title"></span><br/>
+                            <span class="ion super-clock">&nbsp;</span>
+                            <span ng-hide="coupon.sale_start" ng-bind="toExpire(coupon.expire_date)|date:'d/M'"></span>
+                            <span ng-show="coupon.sale_start" ng-bind="(toDate(coupon.sale_start)|date:'d/M') + ' - ' + (toDate(coupon.sale_end)|date:'d/M')"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col col-66">
+                    <h4 class="padding-horizontal">
+                        {{coupon.title}}
+                        <br/>
+                        <span style="font-size: .7em"> - {{coupon.size}}</span>
+                    </h4>
+                </div>
+                <div class="col col-33 text-center">
+                    <span style="font-size: 1.8em" class="balanced" ng-bind="(coupon.new_price|number:2|currency)"></span>
+                </div>
+
+            </div>
+
+            <div class="button-bar" style="background-color: #d9d9d9;">
+                    <span class="button button-icon dark">
+                        <strong>Save {{saving(coupon)|number:2|currency}}</strong>
+                    </span>
+                    <super-navigate class="button button-icon positive" ng-if="coupon.shop.locations.length" location="coupon#modalmap" data-params-locations="{{ coupon.shop.locations }}">
+                        <i class="icon super-map"></i>
+                    </super-navigate>
+                    <span class="button button-icon light"
+                          ng-class="{true:'calm-bg',false:'energized-bg'}[inCart(coupon)]" ng-click="toCart(coupon)">
+                        <strong ng-if="inCart(coupon) == false">Add to List</strong>
+                        <strong ng-if="inCart(coupon) == true">Added</strong>
+                    </span>
+            </div>
+
+            <div id='slider' ng-show="coupon.photos[0]">
+                <super-slide-box show-pager="true" class="stable-bg">
+                    <super-slide>
+                        <div class="image text-center">
+                            <img ng-src="{{coupon.photos[0].path}}" alt="Image 1" height="300"/>
+                        </div>
+                    </super-slide>
+                </super-slide-box>
+            </div>
+
+            <div class="padding-horizontal">
+                <div class="row">
+                    <div class="col">
+                        <div class="coupon-description" ng-if="coupon.description">
+                            <hr class="thin"/>
+                            <h4 class>Description</h4>
+
+                            <p class ng-bind-html="coupon.description"></p>
+                        </div>
+
+                        <div ng-if="coupon.coupon_tags.length > 0">
+                            <hr class="thin"/>
+                            <h3 class>Tags</h3>
+                            <h4>
+                                <a href="#" nourl class="label label-primary tags"
+                                   ng-repeat="tag in coupon.coupon_tags.split(',') track by $index"
+                                   ng-bind-html="tag+' <span class=\'ion super-ios7-search-strong\'></span>'"
+                                   ng-click="closeModal();searchTag(tag);"></a>
+                            </h4>
+                            <hr class="thin">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!--<super-footer-bar class="bar-stable">
+            <div class="buttons">
+                <span class="button button-icon">
+                    {{coupon.like_num}}&nbsp;<i class="icon super-eye"></i>
+                </span>
+            </div>
+            <h1 class="title"></h1>
+            <div class="buttons">
+                <button class="button button-clear" ng-class="{true:'calm',false:'energized'}[inCart(coupon)]" ng-click="toCart(coupon)">
+                    <i ng-if="inCart(coupon) == false">Add to List</i>
+                    <i ng-if="inCart(coupon) == true">Added</i>
+                </button>
+            </div>
+        </super-footer-bar>-->
+    </div>
+</div>

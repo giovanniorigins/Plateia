@@ -1,0 +1,9 @@
+<div class="list" ng-controller="CategoryJumpController">
+    <a class="item item-icon-right" ng-class="{true:'positive'}[selectedCategory==null]" href="#" ng-click="filterTo(null)">
+        <h2>All</h2>
+    </a>
+    <a class="item item-icon-right" ng-class="{true:'positive'}[selectedCategory==cat.id]" href="#" ng-click="filterTo(cat.id)" ng-repeat="cat in categories track by cat.id">
+        <h2 ng-bind="cat.title"></h2>
+        <span class="badge badge-balanced">{{cat.deals_count}}</span>
+    </a>
+</div>

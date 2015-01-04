@@ -1,0 +1,94 @@
+<div ng-controller="ModalController">
+    <super-navbar class="red-bar">
+        <super-navbar-title ng-bind="shop.title"></super-navbar-title>
+        <super-navbar-button side="right" ng-click="closeModal()">Close</super-navbar-button>
+    </super-navbar>
+
+    <div ng-hide="showSpinner">
+        <div class="button-bar dark-bg">
+            <!--<div class="button button-icon">
+                <span class="icon super-eye"></span> {{shop.views_num|number:0}} Views
+            </div>-->
+
+            <super-navigate class="button button-icon light" ng-if="shop.locations.length" location="shop#modalmap"
+                            data-params-locations="{{ shop.locations }}">
+                <i class="icon super-map"></i> Locations
+            </super-navigate>
+            <div class="button button-icon">
+                <span class="icon" ng-class="{true:'super-ios7-star energized',false:'super-ios7-star-outline light'}[shop.rating.avg>=1]"></span>
+                <span class="icon" ng-class="{true:'super-ios7-star energized',false:'super-ios7-star-outline light'}[shop.rating.avg>=2]"></span>
+                <span class="icon" ng-class="{true:'super-ios7-star energized',false:'super-ios7-star-outline light'}[shop.rating.avg>=3]"></span>
+                <span class="icon" ng-class="{true:'super-ios7-star energized',false:'super-ios7-star-outline light'}[shop.rating.avg>=4]"></span>
+                <span class="icon" ng-class="{true:'super-ios7-star energized',false:'super-ios7-star-outline light'}[shop.rating.avg>=5]"></span>
+            </div>
+            <!--<a class="button button-icon icon ion-star" ng-click="thumbs(activeDeal, 'up');"></a>-->
+
+            <a class="button button-icon light" ng-click="favShop(shop.id);">
+                <span ng-if="faved(shop.id)==false">
+                        <i class="icon super-ios7-eye-outline"></i> Watch
+                    </span>
+                    <span ng-if="faved(shop.id)==true">
+                        <i class="icon super-ios7-eye balanced"></i> Watching
+                    </span>
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col col-33"></div>
+            <div class="col col-33 text-center">
+                <img class="text-center" ng-src="{{shop.photos[0].path}}" alt="{{shop.title}}"/>
+            </div>
+            <div class="col col-33"></div>
+        </div>
+        <hr class="thin"/>
+
+        <div class="masonry">
+            <div class="masonry-item masonry-deal am-fade-and-scale" ng-repeat="deal in shop.deals">
+                <super-modal-show location="deal#modal?id={{deal.id}}" class="masonry-deal-header">
+                    <div ng-switch="deal.photos.length != 0 && deal.photos != null">
+                        <img ng-switch-when="true" ng-src="{{deal.photos[0].path}}" alt="{{deal.photos[0].title}}" style="max-width: 100%"/>
+                        <img ng-switch-when="false" ng-src="{{deal.shop.photos[0].path}}" alt="{{deal.photos[0].title}}" style="max-width: 100%"/>
+                    </div>
+
+                    <div class="row light-bg" style="position:absolute;bottom:0;background: rgba(255,255,255,.7);">
+                        <div class="col dark" style="">
+                            <h4 class="dark"><strong ng-bind="deal.title"></strong></h4>
+
+                            <h2 class="">
+                                <strong ng-bind="deal.new_price|number:2|currency"></strong><span ng-if="deal.show_size">, {{ deal.size }}</span>
+                            </h2>
+                        </div>
+                    </div>
+                </super-modal-show>
+
+                <div class="item tabs tabs-secondary tabs-icon-only">
+                    <a id="{{'share_' + deal.id}}" class="tab-item" href="#" ng-click="share(deal)">
+                        <i class="icon super-share"></i>
+                    </a>
+                    <a class="tab-item" ng-click="toCart(deal);" href="#">
+                        <i ng-if="inCart(deal) == false" class="icon super-ios7-heart-outline"></i>
+                        <i ng-if="inCart(deal) == true" class="icon super-ios7-heart"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!--<div class="list">
+            <super-navigate location="deal#modal?id={{deal.id}}" class="item item-thumbnail-left" ng-repeat="deal in shop.deals">
+                <img ng-src="{{deal.photos[0].path}}">
+
+                <h2>
+                    {{deal.title}}
+                    <br/>
+
+                    <h3>from {{deal.shop_title}}</h3>
+                </h2>
+
+                <p>{{deal.discount_amount|number:0}} % Off</p>
+
+                <p>Ends {{toExpire(deal.expire_date)}}</p>
+            </super-navigate>
+        </div>-->
+    </div>
+</div>

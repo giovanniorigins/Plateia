@@ -1,0 +1,18 @@
+<div ng-controller="IndexController">
+    <div ng-hide="showSpinner">
+        <div class="row">
+            <form name="subSearch" class="item item-input-inset search-bar col" search-bar>
+                <label class="item-input-wrapper">
+                    <i class="icon super-ios7-search placeholder-icon"></i>
+                    <input type="search" placeholder="Search Deals" ng-model="search" ng-keyup="search($event)">
+                    <i class="icon super-close-circled placeholder-icon" ng-show="search.length != 0"
+                       ng-click="search = ''" style="font-size:30px;"></i>
+                </label>
+                <button type="submit" class="button button-clear hide">
+                    Search
+                </button>
+            </form>
+        </div>
+        <div ng-include="'/app/common/_deal.html'"></div>
+    </div>
+</div>

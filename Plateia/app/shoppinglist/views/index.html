@@ -1,0 +1,41 @@
+<div ng-controller="IndexController">
+    <super-navbar class="blue-bar">
+        <super-navbar-title>
+            Shopping List
+        </super-navbar-title>
+    </super-navbar>
+    <div class="bar bar-footer bar-balanced" style="position: fixed;bottom: 0;left:0;right: 0;">
+        <h1 class="title">Total Savings: <span class="">{{totalSavings()|number:2|currency}}</span></h1>
+    </div>
+    <div class="content padding-bottom">
+        <div ng-show="showSpinner" ng-include="'_spinner.html'"></div>
+        <div ng-hide="showSpinner">
+            <ul class="list">
+                <super-modal-show location="deal#modal?id={{ deal.id }}"
+                                  class="item item-thumbnail-left item-icon-right"
+                                  ng-show="deals" ng-repeat="deal in deals">
+                    <img ng-if="deal.photos.length != 0 && deal.photos != null" ng-src="{{deal.photos[0].path}}">
+                    <img ng-if="deal.photos == '' || photos.deal_images === null" ng-src="{{deal.shop.photos[0].path}}">
+
+                    <h3 ng-bind="deal.title"></h3>
+                <span style="font-size: .75em" ng-if="deal.photos.length != 0 && deal.photos != null"
+                      ng-bind-html="'at ' + deal.shop.title +'<br/>'"></span>
+                    <strong class="balanced" ng-bind="deal.new_price|number:2|currency"></strong>
+                    <span ng-bind-html="', '+deal.size"></span>
+
+                    <p class="" ng-if="deal.like_num" ng-pluralize="" count="deal.like_num"
+                       when="{'0': '', 'one': '1 user added', 'other': '{} users added'}"></p>
+
+                    <i class="icon super-chevron-right icon-accessory"></i>
+                </super-modal-show>
+            </ul>
+
+            <div ng-show="shoppingList.length==0">
+                <button class="button button-clear button-positive button-block">
+                    <span class="icon super-alert"></span> Your Shopping List is empty! Start finding some great deals!
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,40 @@
+<div ng-controller="ShowController">
+  <super-navbar>
+    <super-navbar-title>
+      Show
+    </super-navbar-title>
+  </super-navbar>
+
+  <div class="padding">
+    <div ng-show="showSpinner" ng-include="'_spinner.html'"></div>
+    <div ng-hide="showSpinner">
+      <h2 ng-bind="category['id']"></h2>
+      
+      
+      
+       <p>title: <span ng-bind="category['title']"></span></p> 
+      
+       <p>title_alias: <span ng-bind="category['title_alias']"></span></p> 
+      
+       <p>category_icon: <span ng-bind="category['category_icon']"></span></p> 
+      
+       <p>created_at: <span ng-bind="category['created_at']"></span></p> 
+      
+       <p>updated_at: <span ng-bind="category['updated_at']"></span></p> 
+      
+       <p>deals: <span ng-bind="category['deals']"></span></p> 
+      
+
+
+      <super-modal-show location="category#edit?id={{ category.id }}">
+        <button class="button button-block button-positive">
+          Edit
+        </button>
+      </super-modal-show>
+
+      <button ng-click="remove(category.id)" class="button button-block button-negative">
+        Remove
+      </button>
+    </div>
+  </div>
+</div>

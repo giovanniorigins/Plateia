@@ -1,0 +1,14 @@
+<div ng-controller="IndexController">
+    <super-navbar class="purple-bar">
+        <super-navbar-title>
+            Coupons
+        </super-navbar-title>
+        <super-navbar-button id="filer_button" side="right" ng-click="categoryJump()"><span data-icon="&#xf4ca"></span>Filter</super-navbar-button>
+
+    </super-navbar>
+
+    <div ng-show="showSpinner" ng-include="'_spinner.html'"></div>
+    <div ng-hide="showSpinner">
+        <div ng-include="'/app/common/_coupon.html'"></div>
+    </div>
+</div>

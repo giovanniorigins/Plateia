@@ -1,0 +1,30 @@
+<div class="masonry">
+    <div class="shop-item masonry-item masonry-deal"
+         ng-repeat="coupon in coupons track by coupon.id">
+        <super-modal-show location="coupon#modal?id={{ coupon.id }}" class="item item-image">
+            <img ng-if="coupon.photos.length != 0 && coupon.photos != null"
+                 ng-src="{{coupon.photos[0].path}}">
+            <img ng-if="coupon.photos == '' || photos.coupon_images === null"
+                 ng-src="{{coupon.shop.photos[0].path}}">
+
+            <div class="row light-bg" style="position:absolute;bottom:0;background: rgba(255,255,255,.7);">
+                <div class="col dark" style="">
+                    <h4 class="dark"><strong ng-bind="coupon.title"></strong></h4>
+
+                    <h2 class="" ng-bind="coupon.description"></h2>
+                </div>
+            </div>
+        </super-modal-show>
+
+        <div class="item tabs tabs-secondary tabs-icon-left">
+            <a id="{{'share_' + coupon.id}}" class="tab-item" href="#" ng-click="share(coupon)">
+                <i class="icon super-share"></i>
+            </a>
+            <a class="tab-item" href="#" ng-click="toCart(coupon);">
+                <i ng-if="inCart(coupon) == false" class="icon super-ios7-cart"></i>
+                <i ng-if="inCart(coupon) == true" class="icon super-checkmark-round balanced"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
